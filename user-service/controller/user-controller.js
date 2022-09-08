@@ -2,6 +2,7 @@ import { ormCreateUser as _createUser } from '../model/user-orm.js'
 import { ormSignIn as _signIn } from '../model/user-orm.js'
 import { ormDeleteUser as _deleteUser } from '../model/user-orm.js'
 import { ormChangePassword as _changePassword } from '../model/user-orm.js'
+import jwt from 'jsonwebtoken'
 
 // [POST - Public] Create user with username, email and password
 export async function createUser(req, res) {
@@ -27,7 +28,7 @@ export async function createUser(req, res) {
     }
 }
 
-// [GET - Public] Sign in with username and password 
+// [POST - Public] Sign in with username and password 
 export async function signIn(req, res) {
     try {
         const { email, password } = req.body;
@@ -36,7 +37,13 @@ export async function signIn(req, res) {
             if (resp) {
                 console.log(resp)
                 console.log(`Successfully signed in as ${resp}!`)
-                return res.status(200).json({message: `Successfully signed in as ${resp}!`});
+
+                // Generate auth token
+                const token = generateToken(resp)
+                return res.status(200).json({
+                    message: `Successfully signed in as ${resp}!`,
+                    token: `${token}`
+                });
             } else {
                 console.log(`Username or email address incorrect!`)
                 return res.status(400).json({message: 'Username or email address incorrect!'});
@@ -54,7 +61,7 @@ export async function signIn(req, res) {
 // [DELETE - Private] Delete account
 export async function deleteUser(req, res) {
     try {
-        // TODO: Add auth
+        // Auth done as middleware
         const email = req.params.email;
         if (email) {
             const resp = await _deleteUser(email);
@@ -97,4 +104,9 @@ export async function changePassword(req, res) {
         console.log(err)
         return res.status(500).json({message: 'Database failure when deleting user!'})
     }
+}
+
+// Generate JWT
+const generateToken = (email) => {
+    return jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '30d' })
 }

@@ -9,6 +9,7 @@ export async function ormCreateUser(username, email, password) {
             return false
         } else {
             try {
+                // Create User
                 const newUser = await createUser({username, email, password})
                 await newUser.save()
                 return true
