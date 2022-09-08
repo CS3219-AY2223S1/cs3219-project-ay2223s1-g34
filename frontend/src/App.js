@@ -1,19 +1,35 @@
 import {BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
-import SignupPage from './components/SignupPage';
-import {Box} from "@mui/material";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CreateAccountPage from './components/CreateAccountPage';
+import SignInPage from './components/SignInPage';
+import ForgotPasswordPage from './components/ForgotPasswordPage';
+
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#212121'
+            },
+        secondary: {
+            main: '#FFFFFF'
+        },
+        error: {
+            main: '#ff0000'
+        }
+    }
+  });
 
 function App() {
     return (
-        <div className="App">
-            <Box display={"flex"} flexDirection={"column"} padding={"4rem"}>
+        <ThemeProvider theme={theme}>
+            <div className="App">
                 <Router>
                     <Routes>
                         <Route exact path="/" element={<Navigate replace to="/signup" />}></Route>
-                        <Route path="/signup" element={<SignupPage/>}/>
+                        <Route path="/signup" element={<CreateAccountPage/>}/>
                     </Routes>
                 </Router>
-            </Box>
-        </div>
+            </div>
+        </ThemeProvider>
     );
 }
 
