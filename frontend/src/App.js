@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CreateAccountPage from './components/CreateAccountPage';
 import SignInPage from './components/SignInPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
+import HomePage from './components/HomePage';
 
 const theme = createTheme({
     palette: {
@@ -24,8 +25,11 @@ function App() {
             <div className="App">
                 <Router>
                     <Routes>
-                        <Route exact path="/" element={<Navigate replace to="/signup" />}></Route>
+                        <Route exact path="/" element={<Navigate replace to="/home" />}></Route>
+                        <Route path="/signin" element={<SignInPage/>}/>
                         <Route path="/signup" element={<CreateAccountPage/>}/>
+                        <Route path="/forgotpassword" element={<ForgotPasswordPage/>}/>
+                        <Route path="/home" element={<HomePage/>}/>
                     </Routes>
                 </Router>
             </div>

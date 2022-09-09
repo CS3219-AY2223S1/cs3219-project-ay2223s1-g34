@@ -1,22 +1,24 @@
 import express from 'express'
 import cors from 'cors'
-import { createUser, signIn, deleteUser, changePassword } from './controller/user-controller.js'
-import { isAuth } from './middleware/auth.js'
+import cookies from 'cookie-parser'
+
+import { createUser, signIn, deleteUser, changePassword, logout } from './controller/user-controller.js'
+import { isAuth } from './middleware/auth.js';
 
 const app = express();
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-app.use(cors()) // config cors so that front-end can use
+app.use(cookies());
+app.use(cors({ origin: true, credentials: true })) // config cors so that front-end can use
 app.options('*', cors())
 
+// Router 
 const router = express.Router()
-
-// Controller will contain all the User-defined Routes
-//router.get('/', (_, res) => res.send('Hello World from user-service'))
 router.post('/createacc', createUser)
 router.post('/signin', signIn)
 router.delete('/deleteacc/:email', isAuth, deleteUser)
 router.put('/changepw/:email', isAuth, changePassword)
+router.post('/logout', logout)
 
 app.use('/api/user', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')
