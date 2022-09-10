@@ -2,12 +2,8 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
-import {
-	STATUS_CODE_CONFLICT,
-	STATUS_CODE_CREATED,
-	STATUS_CODE_SUCCESS,
-} from "../constants";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { STATUS_CODE_SUCCESS } from "../constants";
+import { useNavigate } from "react-router-dom";
 
 function SignInPage() {
 	const [email, setEmail] = useState("");
@@ -43,7 +39,7 @@ function SignInPage() {
 		<Box display="flex" flexDirection="row" height="100vh">
 			<Box
 				display="flex"
-				flexDirection="row"
+				flexDirection="column"
 				backgroundColor="primary.main"
 				width="50%"
 				alignItems="center"
@@ -58,16 +54,17 @@ function SignInPage() {
 					width="60%"
 				>
 					PeerPrep
-					<Typography
-						display="block"
-						fontSize="0.5em"
-						fontFamily="Poppins"
-						color="secondary.main"
-						align="center"
-						marginTop="1em"
-					>
-						Some text or image about PeerPrep
-					</Typography>
+				</Typography>
+
+				<Typography
+					fontSize="0.5em"
+					fontFamily="Poppins"
+					color="secondary.main"
+					align="center"
+					marginTop="1em"
+					width="60%"
+				>
+					Some text or image about PeerPrep
 				</Typography>
 			</Box>
 

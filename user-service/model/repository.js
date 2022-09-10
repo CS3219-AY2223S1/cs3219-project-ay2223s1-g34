@@ -1,11 +1,11 @@
 import UserModel from "./user-model.js";
 import JWTModel from "./jwt-model.js";
 import "dotenv/config";
-
-//Set up mongoose connection
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
+//Set up mongoose connection
 let mongoDB =
 	process.env.ENV == "PROD"
 		? process.env.DB_CLOUD_URI
@@ -42,21 +42,44 @@ export async function changePassword(email, oldPassword, newPassword) {
 		// Hash password
 		const salt = await bcrypt.genSalt(10);
 		const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-		return await UserModel.findOneAndUpdate(
-			{ email: email },
-			{ password: hashedPassword }
-		);
+		account.password = hashedPassword;
+		await account.save();
+		return account;
 	} else {
 		return null;
 	}
 }
 
-// Check username / email already exists
+// Reset password
+export async function resetPassword(token, newPassword) {
+	const resetToken = crypto.createHash("sha256").update(token).digest("hex");
+	const account = await UserModel.findOne({
+		resetToken,
+		resetTokenExpiry: { $gt: Date.now() },
+	});
+
+	if (account) {
+		// Hash password
+		const salt = await bcrypt.genSalt(10);
+		const hashedPassword = await bcrypt.hash(newPassword, salt);
+		account.password = hashedPassword;
+		await account.save();
+		return account;
+	} else {
+		return null;
+	}
+}
+
+// Check username / email already exists for create account
 export async function isExist(username, email) {
 	const usernameExist = await UserModel.findOne({ username: username });
 	const emailExist = await UserModel.findOne({ email: email });
 	return usernameExist || emailExist;
+}
+
+// Check email already exists for forgot password
+export async function isEmailExist(email) {
+	return await UserModel.findOne({ email: email });
 }
 
 // Check email and password valid for sign in

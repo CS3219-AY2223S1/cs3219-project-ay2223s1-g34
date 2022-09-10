@@ -1,8 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
-import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { STATUS_CODE_SUCCESS } from "../constants";
 
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
@@ -26,7 +26,11 @@ function HomePage() {
 	const [oldPassword, setOldPassword] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [openChangePassword, setOpenChangePassword] = useState(false);
+	const [changePasswordSuccess, setChangePasswordSuccess] = useState(false);
 	const [changePwError, setChangePwError] = useState("");
+	const [confirmLogout, setConfirmLogout] = useState(false);
+	const [confirmDeleteAccount, setConfirmDeleteAccount] = useState(false);
+
 	const [anchorEl, setAnchorEl] = useState(null);
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -47,6 +51,14 @@ function HomePage() {
 		setOpenChangePassword(false);
 	};
 
+	const handleOpenChangePasswordSuccess = () => {
+		setChangePasswordSuccess(true);
+	};
+
+	const handleCloseChangePasswordSuccess = () => {
+		setChangePasswordSuccess(false);
+	};
+
 	const handleChangePasswordConfirm = async () => {
 		const res = await axios
 			.put(
@@ -59,8 +71,9 @@ function HomePage() {
 				setChangePwError(err.response.data.message);
 			});
 
-		if (res) {
-			setOpenChangePassword(false);
+		if (res && res.status === STATUS_CODE_SUCCESS) {
+			handleOpenChangePasswordSuccess();
+			handleChangePasswordCancel();
 		}
 	};
 
@@ -75,24 +88,40 @@ function HomePage() {
 				console.log(err);
 			});
 
-		if (res) {
+		if (res && res.status === STATUS_CODE_SUCCESS) {
 			navigate("/signin");
 		}
 	};
 
+	const handleConfirmLogoutOpen = () => {
+		setConfirmLogout(true);
+	};
+
+	const handleConfirmLogoutClose = () => {
+		setConfirmLogout(false);
+	};
+
 	const handleDeleteAccount = async () => {
 		const res = await axios
-			.delete(
-				URL_USER_SVC + "/deleteacc" + "/" + location.state.email,
-				{ withCredentials: true, credentials: "include" }
-			)
+			.delete(URL_USER_SVC + "/deleteacc" + "/" + location.state.email, {
+				withCredentials: true,
+				credentials: "include",
+			})
 			.catch((err) => {
 				console.log(err);
 			});
 
-		if (res) {
-			navigate("/signin");
+		if (res && res.status === STATUS_CODE_SUCCESS) {
+			handleLogout();
 		}
+	};
+
+	const handleConfirmDeleteOpen = () => {
+		setConfirmDeleteAccount(true);
+	};
+
+	const handleConfirmDeleteClose = () => {
+		setConfirmDeleteAccount(false);
 	};
 
 	return (
@@ -228,7 +257,7 @@ function HomePage() {
 								Change Password
 							</MenuItem>
 							<MenuItem
-								onClick={handleLogout}
+								onClick={handleConfirmLogoutOpen}
 								sx={{
 									fontFamily: "Poppins",
 									fontSize: "0.3em",
@@ -237,7 +266,7 @@ function HomePage() {
 								Logout
 							</MenuItem>
 							<MenuItem
-								onClick={handleDeleteAccount}
+								onClick={handleConfirmDeleteOpen}
 								sx={{
 									fontFamily: "Poppins",
 									fontSize: "0.3em",
@@ -249,6 +278,112 @@ function HomePage() {
 					</Box>
 				</Toolbar>
 			</AppBar>
+
+			<Dialog open={changePasswordSuccess}>
+				<DialogTitle
+					sx={{
+						fontWeight: "700",
+						fontSize: "0.4em",
+						fontFamily: "Poppins",
+					}}
+				>
+					Change Password Success!
+				</DialogTitle>
+
+				<DialogActions>
+					<Button
+						onClick={handleCloseChangePasswordSuccess}
+						autoFocus
+						sx={{
+							textTransform: "none",
+							fontSize: "0.3em",
+							fontFamily: "Poppins",
+						}}
+					>
+						OK
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog open={confirmLogout}>
+				<DialogTitle
+					sx={{
+						fontWeight: "700",
+						fontSize: "0.4em",
+						fontFamily: "Poppins",
+					}}
+				>
+					Do you want to logout?
+				</DialogTitle>
+
+				<DialogActions>
+					<Button
+						variant="outlined"
+						onClick={handleConfirmLogoutClose}
+						autoFocus
+						sx={{
+							textTransform: "none",
+							fontSize: "0.3em",
+							fontFamily: "Poppins",
+						}}
+					>
+						No
+					</Button>
+
+					<Button
+						onClick={handleLogout}
+						autoFocus
+						variant="contained"
+						sx={{
+							textTransform: "none",
+							fontSize: "0.3em",
+							fontFamily: "Poppins",
+						}}
+					>
+						Yes
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog open={confirmDeleteAccount}>
+				<DialogTitle
+					sx={{
+						fontWeight: "700",
+						fontSize: "0.4em",
+						fontFamily: "Poppins",
+					}}
+				>
+					Do you want to delete account?
+				</DialogTitle>
+
+				<DialogActions>
+					<Button
+						variant="outlined"
+						onClick={handleConfirmDeleteClose}
+						autoFocus
+						sx={{
+							textTransform: "none",
+							fontSize: "0.3em",
+							fontFamily: "Poppins",
+						}}
+					>
+						No
+					</Button>
+
+					<Button
+						onClick={handleDeleteAccount}
+						autoFocus
+						variant="contained"
+						sx={{
+							textTransform: "none",
+							fontSize: "0.3em",
+							fontFamily: "Poppins",
+						}}
+					>
+						Yes
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</Box>
 	);
 }

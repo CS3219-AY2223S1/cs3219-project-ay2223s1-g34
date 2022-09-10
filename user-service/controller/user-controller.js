@@ -3,6 +3,8 @@ import { ormSignIn as _signIn } from "../model/user-orm.js";
 import { ormDeleteUser as _deleteUser } from "../model/user-orm.js";
 import { ormChangePassword as _changePassword } from "../model/user-orm.js";
 import { ormLogoutUser as _logoutUser } from "../model/user-orm.js";
+import { ormForgotPassword as _forgotPassword } from "../model/user-orm.js";
+import { ormResetPassword as _resetPassword } from "../model/user-orm.js";
 import jwt from "jsonwebtoken";
 
 // [POST - Public] Create user with username, email and password
@@ -12,9 +14,7 @@ export async function createUser(req, res) {
 		if (username && email && password) {
 			const resp = await _createUser(username, email, password);
 			if (resp.err) {
-				return res
-					.status(400)
-					.json({ message: "Could not create a new user!" });
+				return res.status(400).json({ message: "Invalid email" });
 			}
 			if (resp) {
 				console.log(`Created new user ${username} successfully!`);
@@ -118,10 +118,10 @@ export async function changePassword(req, res) {
 					.status(200)
 					.json({ message: `Change password successfull!` });
 			} else {
-				console.log(`Change password unsuccessfull!`);
+				console.log(`Incorrect old password`);
 				return res
 					.status(400)
-					.json({ message: `Change password unsuccessfull!` });
+					.json({ message: `Incorrect old password` });
 			}
 		} else {
 			return res
@@ -136,6 +136,35 @@ export async function changePassword(req, res) {
 	}
 }
 
+// [PUT - Private] Reset password
+export async function resetPassword(req, res) {
+	try {
+		const token = req.params.token;
+		const newPassword = req.body.new;
+		if (token && newPassword) {
+			const resp = await _resetPassword(token, newPassword);
+			if (resp) {
+				console.log(`Reset password successfull!`);
+				return res
+					.status(200)
+					.json({ message: `Reset password successfull!` });
+			} else {
+				console.log(`Reset password failed!`);
+				return res
+					.status(400)
+					.json({ message: `Reset password failed!` });
+			}
+		} else {
+			return res
+				.status(400)
+				.json({ message: "Please fill up all fields!" });
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ message: "Unknown Error" });
+	}
+}
+
 // [POST - Private] Logout
 export async function logout(req, res) {
 	try {
@@ -143,6 +172,30 @@ export async function logout(req, res) {
 		res.clearCookie("token");
 		res.end();
 	} catch (err) {}
+}
+
+// [POST - Public] Forgot Password
+export async function forgotPassword(req, res) {
+	try {
+		const resp = await _forgotPassword(req.params.email);
+		if (resp.err) {
+			return res.status(400).json({ message: "Invalid email" });
+		}
+		if (resp) {
+			console.log(`Password reset email sent!`);
+			return res.status(200).json({
+				message: `Password reset email sent!`,
+			});
+		} else {
+			console.log(`Password reset email failed to sent!`);
+			return res.status(500).json({
+				message: "`Password reset email failed to sent!",
+			});
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ message: "Unknown error" });
+	}
 }
 
 // Generate JWT

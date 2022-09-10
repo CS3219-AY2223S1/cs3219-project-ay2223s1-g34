@@ -9,24 +9,19 @@ import {
 	DialogTitle,
 } from "@mui/material";
 
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
 import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { STATUS_CODE_SUCCESS } from "../constants";
 
-function ForgotPasswordPage() {
-	const [email, setEmail] = useState("");
+function ResetPasswordPage() {
+	const [password, setPassword] = useState("");
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isOpen, setIsOpen] = useState(false);
 
 	const navigate = useNavigate();
-
-	const handleBack = async () => {
-		navigate("/signin");
-	};
+	const location = useLocation();
 
 	const handleOpen = () => {
 		setIsOpen(true);
@@ -36,14 +31,19 @@ function ForgotPasswordPage() {
 		navigate("/signin");
 	};
 
-	const handleForgotPassword = async () => {
+	const handleResetPassword = async () => {
 		const res = await axios
-			.post(URL_USER_SVC + "/forgotpw" + "/" + email)
+			.put(
+				URL_USER_SVC +
+					"/resetpw" +
+					"/" +
+					location.pathname.split("/")[2],
+				{ new: password }
+			)
 			.catch((err) => {
 				console.log(err);
 				setErrorMessage(err.response.data.message);
 			});
-
 		if (res && res.status === STATUS_CODE_SUCCESS) {
 			handleOpen();
 		}
@@ -58,14 +58,6 @@ function ForgotPasswordPage() {
 				width="50%"
 				alignItems="center"
 			>
-				<Box alignSelf="flex-start" justifyItems="center">
-					<Button disableRipple onClick={handleBack}>
-						<ArrowBackIcon
-							sx={{ fontSize: "0.75em" }}
-						></ArrowBackIcon>
-					</Button>
-				</Box>
-
 				<Box
 					display="flex"
 					flexDirection="column"
@@ -80,19 +72,20 @@ function ForgotPasswordPage() {
 						color="primary.main"
 						marginBottom="1.5em"
 					>
-						Forgot Password
+						Reset Password
 					</Typography>
 
 					<TextField
-						label="Email Address"
+						label="New Password"
 						fullWidth
 						size="small"
 						variant="standard"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
 						sx={{ marginBottom: "1em" }}
 						inputProps={{ style: { fontSize: "0.3em" } }}
 						InputLabelProps={{ style: { fontSize: "0.3em" } }}
+						type="password"
 						autoFocus
 					></TextField>
 
@@ -107,7 +100,7 @@ function ForgotPasswordPage() {
 					</Typography>
 
 					<Button
-						onClick={handleForgotPassword}
+						onClick={handleResetPassword}
 						color="primary"
 						size="large"
 						variant={"contained"}
@@ -166,7 +159,7 @@ function ForgotPasswordPage() {
 				<DialogContent
 					sx={{ fontSize: "0.3em", fontFamily: "Poppins" }}
 				>
-					An email has been sent to reset your password
+					Password has been reset
 				</DialogContent>
 				<DialogActions>
 					<Button
@@ -187,4 +180,4 @@ function ForgotPasswordPage() {
 	);
 }
 
-export default ForgotPasswordPage;
+export default ResetPasswordPage;

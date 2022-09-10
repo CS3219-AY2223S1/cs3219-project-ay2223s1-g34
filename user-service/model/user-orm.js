@@ -1,3 +1,4 @@
+import { sendEmail } from "../middleware/sendEmail.js";
 import {
 	createUser,
 	deleteUser,
@@ -5,7 +6,8 @@ import {
 	isValidSignIn,
 	changePassword,
 	logoutUser,
-	isBlacklist,
+	isEmailExist,
+	resetPassword,
 } from "./repository.js";
 
 //need to separate orm functions from repository to decouple business logic from persistence
@@ -50,6 +52,15 @@ export async function ormChangePassword(email, oldPassword, newPassword) {
 	}
 }
 
+export async function ormResetPassword(token, newPassword) {
+	try {
+		return resetPassword(token, newPassword);
+	} catch (err) {
+		console.log("ERROR: Reset password unsuccessful");
+		return { err };
+	}
+}
+
 export async function ormSignIn(email, password) {
 	try {
 		// Check whether correct email and password
@@ -68,5 +79,35 @@ export async function ormLogoutUser(token) {
 	} catch (err) {
 		console.log("ERROR: User logout unsuccessful!");
 		return { err };
+	}
+}
+
+export async function ormForgotPassword(email) {
+	// Check whether email exist
+	const user = await isEmailExist(email);
+	if (user) {
+		const resetToken = user.getResetPasswordToken();
+		await user.save();
+
+		// Create and send Email
+		const resetUrl = `http://localhost:3000/resetpw/${resetToken}`;
+		const text = `Click the link to reset your password: ${resetUrl}`;
+		try {
+			// Put actual email address here to receive reset emails (as email addresses are not verified at creation)
+			await sendEmail({
+				email: process.env.TO_EMAIL,
+				subject: "Password Reset",
+				text,
+			});
+			return true;
+		} catch (err) {
+			console.log(err);
+			user.resetToken = undefined;
+			user.resetTokenExpiry = undefined;
+			await user.save();
+			return err;
+		}
+	} else {
+		return false;
 	}
 }

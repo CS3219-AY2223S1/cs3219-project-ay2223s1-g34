@@ -6,8 +6,7 @@ import {
 	Dialog,
 	DialogContent,
 	DialogActions,
-	DialogTitle,
-	DialogContentText,
+	DialogTitle
 } from "@mui/material";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -15,8 +14,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { STATUS_CODE_CREATED } from "../constants";
+import { useNavigate } from "react-router-dom";
 
 function CreateAccountPage() {
 	const [username, setUsername] = useState("");
@@ -128,7 +127,6 @@ function CreateAccountPage() {
 						color="error.main"
 						align="center"
 						marginBottom="1em"
-						display="none"
 					>
 						{errorMessage}
 					</Typography>
@@ -183,7 +181,7 @@ function CreateAccountPage() {
 
 			<Box
 				display="flex"
-				flexDirection="row"
+				flexDirection="column"
 				backgroundColor="primary.main"
 				width="50%"
 				justifyContent="center"
@@ -198,16 +196,15 @@ function CreateAccountPage() {
 					width="60%"
 				>
 					PeerPrep
-					<Typography
-						display="block"
-						fontSize="0.5em"
-						fontFamily="Poppins"
-						color="secondary.main"
-						align="center"
-						marginTop="1em"
-					>
-						Some text or image about PeerPrep
-					</Typography>
+				</Typography>
+				<Typography
+					fontSize="0.5em"
+					fontFamily="Poppins"
+					color="secondary.main"
+					align="center"
+					marginTop="1em"
+				>
+					Some text or image about PeerPrep
 				</Typography>
 			</Box>
 
@@ -231,7 +228,7 @@ function CreateAccountPage() {
 				<DialogActions>
 					<Button
 						onClick={handleBack}
-						autofocus
+						autoFocus
 						sx={{
 							textTransform: "none",
 							fontSize: "0.3em",
