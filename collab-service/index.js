@@ -16,9 +16,10 @@ http.listen(8002)
 
 const io = new Server(http, { cors: { origin: '*' } });
 
+
 //connect
 io.on('connection', (socket) => {
-    log('connected')
+    log('Connected')
     socket.on('message', (evt)=> {
         log(evt)
         socket.broadcast.emit('message',evt)
@@ -27,5 +28,10 @@ io.on('connection', (socket) => {
 
 //disconnect
 io.on('disconnect', (evt) => {
-    log('some people left')
+    log('User left')
+})
+
+io.on('terminate', (evt) => {
+    log('User left')
+    socket.disconnect(0);
 })
