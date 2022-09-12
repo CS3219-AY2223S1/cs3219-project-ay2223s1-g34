@@ -189,7 +189,7 @@ export async function forgotPassword(req, res) {
 		} else {
 			console.log(`Password reset email failed to sent!`);
 			return res.status(500).json({
-				message: "`Password reset email failed to sent!",
+				message: "Password reset email failed to sent!",
 			});
 		}
 	} catch (err) {

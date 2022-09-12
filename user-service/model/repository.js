@@ -63,6 +63,8 @@ export async function resetPassword(token, newPassword) {
 		const salt = await bcrypt.genSalt(10);
 		const hashedPassword = await bcrypt.hash(newPassword, salt);
 		account.password = hashedPassword;
+		account.resetToken = undefined;
+		account.resetTokenExpiry = undefined;
 		await account.save();
 		return account;
 	} else {
