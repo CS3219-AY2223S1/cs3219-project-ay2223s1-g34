@@ -14,7 +14,7 @@ const validateRequest = (res, req) => {
         validationResult(req).throw();
     } catch (err) {
         console.log(err);
-        res.status(400).send("Invalid request");
+        res.status(400).json({ message: "Invalid request" });
         return false;
     }
     return true;
@@ -36,7 +36,7 @@ export async function submitMatch(req, res) {
         match = await ormFindMatch(email, difficultyLevel, createdAt);
     }
 
-    if (!match) {
+    if (!match || match.err) {
         const newMatch = await ormAddMatch(
             socketId,
             email,
@@ -45,11 +45,11 @@ export async function submitMatch(req, res) {
         );
 
         console.log(`Match request from ${email} added`);
-        return res
-            .status(200)
-            .json({
-                message: `New match request is${newMatch ? "" : " not"} added`,
-            });
+        return res.status(200).json({
+            message: `New match request is${
+                !newMatch || newMatch.err ? " not" : ""
+            } added`,
+        });
     }
 
     console.log(`Match found for ${email}`);

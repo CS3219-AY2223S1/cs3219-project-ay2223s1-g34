@@ -25,7 +25,11 @@ export default function WaitingPage() {
         const difficultyLevel = location.state.difficultyLevel;
         const emailToInvite = location.state.emailToInvite;
 
-        const socket = io(URI_MATCHING_SVC);
+        const socket = io(URI_MATCHING_SVC, {
+            withCredentials: true,
+            credentials: "include",
+        });
+
         socket.on("connect", async () => {
             console.log("connect to server");
             const req = {
@@ -54,7 +58,7 @@ export default function WaitingPage() {
                 socket.disconnect();
                 const roomId = res.roomId;
                 navigate("/question", { state: { roomId } });
-                // TODO navigate back to matching and leave room in question page
+                // TODO navigate back to matching if matching cancelled
             } else {
                 setIsRematchVisible(true);
             }
