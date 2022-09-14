@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import io from "socket.io-client";
@@ -6,7 +6,8 @@ import io from "socket.io-client";
 import { Box, Button, Typography } from "@mui/material";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
-import { URI_MATCHING_SVC, URL_MATCHING_SVC } from "../../configs";
+import { URI_MATCHING_SVC, URL_MATCHING_SVC } from "../configs";
+import WaitingTimeRenderer from "../components/matching/WaitingTimeRenderer";
 import RematchDialog from "../components/matching/RematchDialog";
 
 export default function WaitingPage() {
@@ -17,53 +18,53 @@ export default function WaitingPage() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const handleMatching = async () => {
+    const WAIT_DURATION = 30;
+
+    const handleMatching = useCallback(async () => {
         const email = location.state.email;
         const difficultyLevel = location.state.difficultyLevel;
         const emailToInvite = location.state.emailToInvite;
 
         const socket = io(URI_MATCHING_SVC);
-        const socketId = socket.id;
-        socket.on(
-            "connection",
-            async () =>
-                await axios
-                    .post(
-                        URL_MATCHING_SVC,
-                        {
-                            socketId,
-                            email,
-                            difficultyLevel,
-                            emailToInvite,
-                            createdAt: Date.now,
-                        },
-                        { withCredentials: true, credentials: "include" }
-                    )
-                    .then(res => console.log("connection res:\n" + res))
-                    .catch((err) => {
-                        console.log(err);
-                        setIsRematchVisible(true);
-                    })
-        );
+        socket.on("connect", async () => {
+            console.log("connect to server");
+            const req = {
+                socketId: socket.id,
+                email,
+                difficultyLevel,
+                emailToInvite,
+                createdAt: new Date().toISOString(),
+            };
+
+            await axios
+                .post(URL_MATCHING_SVC, req, {
+                    withCredentials: true,
+                    credentials: "include",
+                })
+                .catch((err) => {
+                    console.log(err);
+                    setIsRematchVisible(true);
+                });
+        });
 
         socket.on("matching-success", async (res) => {
             console.log("matching-success");
-            console.log(res);
             if (res) {
                 socket.off();
                 socket.disconnect();
                 const roomId = res.roomId;
-                console.log(roomId);
-                setIsWaitingVisible(false);
                 navigate("/question", { state: { roomId } });
                 // TODO navigate back to matching and leave room in question page
             } else {
                 setIsRematchVisible(true);
             }
         });
-    };
+    }, [location, setIsRematchVisible, navigate]);
 
-    const handleMatchingFailure = () => navigate("/home");
+    const handleMatchingFailure = () => {
+        const state = location.state;
+        navigate("/home", { state });
+    };
 
     const handleRematch = () => {
         setIsRematchVisible(false);
@@ -75,14 +76,14 @@ export default function WaitingPage() {
 
     useEffect(() => {
         handleMatching();
-    });
+    }, [handleMatching]);
 
     return (
         <Box display="flex" justifyContent="center" minHeight="100vh">
             <Box
                 display="flex"
                 flexDirection="column"
-                width="70%"
+                width="50%"
                 justifyContent="center"
             >
                 <Typography
@@ -91,39 +92,52 @@ export default function WaitingPage() {
                     fontFamily="Lato"
                     color="primary.main"
                     marginBottom="1.5em"
+                    align="center"
                 >
                     Matching...
                 </Typography>
 
-                <CountdownCircleTimer
-                    isPlaying
-                    key={key}
-                    duration={30}
-                    colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-                    colorsTime={[30, 20, 10, 0]}
-                    onComplete={() => setIsRematchVisible(true)}
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    marginBottom="1.5em"
                 >
-                    {WaitingTimeRenderer}
-                </CountdownCircleTimer>
+                    <CountdownCircleTimer
+                        isPlaying
+                        key={key}
+                        duration={WAIT_DURATION}
+                        colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+                        colorsTime={[30, 20, 10, 0]}
+                        onComplete={() => setIsRematchVisible(true)}
+                    >
+                        {WaitingTimeRenderer}
+                    </CountdownCircleTimer>
+                </Box>
 
-                <Button
-                    onClick={handleMatchingFailure}
-                    color="primary"
-                    size="large"
-                    variant={"contained"}
-                    sx={{
-                        fontFamily: "Poppins",
-                        fontSize: "0.25em",
-                        letterSpacing: "1.5px",
-                    }}
+                <Box
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="flex-end"
                 >
-                    Cancel
-                </Button>
+                    <Button
+                        onClick={handleMatchingFailure}
+                        color="primary"
+                        size="small"
+                        variant={"contained"}
+                        sx={{
+                            fontFamily: "Poppins",
+                            fontSize: "0.25em",
+                            letterSpacing: "1.5px",
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                </Box>
 
                 <RematchDialog
                     openRematch={isRematchVisible}
                     handleRematch={handleRematch}
-                    handleCancelRematch={() => setIsRematchVisible(false)}
+                    handleCancelRematch={handleMatchingFailure}
                 />
             </Box>
         </Box>

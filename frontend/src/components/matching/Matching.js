@@ -6,10 +6,10 @@ import { Box, Button, TextField, Typography, MenuItem } from "@mui/material";
 import { DIFFICULTY_LEVELS } from "../../constants";
 
 function Matching({ email }) {
-    const [isInviteVisible, setIsInviteVisible] = useState(false);
+    const [isInviteVisible, setIsInviteVisible] = useState("");
     // TODO add topics
 
-    const [difficultyLevel, setDifficultyLevel] = useState("Medium");
+    const [difficultyLevel, setDifficultyLevel] = useState("");
     const [emailToInvite, setEmailToInvite] = useState("");
 
     const [errorMessage, setErrorMessage] = useState("");
@@ -17,13 +17,19 @@ function Matching({ email }) {
     const navigate = useNavigate();
 
     const handleSubmitMatch = async () => {
-        // TODO validate and show error message
+        // TODO validate other fields and show error message
 
-        navigate("/waiting", { state: { email, difficultyLevel, emailToInvite } });
+        if (!difficultyLevel) {
+            setErrorMessage("Select a difficulty level");
+        }
+
+        navigate("/waiting", {
+            state: { email, difficultyLevel, emailToInvite },
+        });
     };
 
     return (
-        <Box display="flex" justifyContent="center" minHeight="100vh">
+        <Box display="flex" justifyContent="center" minHeight="80vh">
             <Box
                 display="flex"
                 flexDirection="column"
@@ -42,6 +48,7 @@ function Matching({ email }) {
                 <TextField
                     select
                     label="Difficulty Level"
+                    defaultValue={DIFFICULTY_LEVELS[1]}
                     fullWidth
                     size="medium"
                     variant="standard"
@@ -78,32 +85,34 @@ function Matching({ email }) {
                         autoFocus
                     ></TextField>
                 )}
-                <Box
-                    display="flex"
-                    flexDirection="row"
-                    justifyContent="flex-end"
-                    marginBottom="0.5em"
-                >
-                    <Button
-                        onClick={() => setIsInviteVisible(true)}
-                        color="primary"
-                        size="medium"
-                        sx={{
-                            fontFamily: "Poppins",
-                            fontSize: "0.25em",
-                            textTransform: "none",
-                            width: "fit-content",
-                            opacity: "70%",
-                            "&:hover": {
-                                backgroundColor: "#FFFFFF",
-                                fontWeight: "700",
-                                opacity: "75%",
-                            },
-                        }}
+                {!isInviteVisible && (
+                    <Box
+                        display="flex"
+                        flexDirection="row"
+                        justifyContent="flex-end"
+                        marginBottom="0.5em"
                     >
-                        Invite a user
-                    </Button>
-                </Box>
+                        <Button
+                            onClick={() => setIsInviteVisible(true)}
+                            color="primary"
+                            size="medium"
+                            sx={{
+                                fontFamily: "Poppins",
+                                fontSize: "0.4em",
+                                textTransform: "none",
+                                width: "fit-content",
+                                opacity: "70%",
+                                "&:hover": {
+                                    backgroundColor: "#FFFFFF",
+                                    fontWeight: "700",
+                                    opacity: "75%",
+                                },
+                            }}
+                        >
+                            Invite a user
+                        </Button>
+                    </Box>
+                )}
                 <Typography
                     fontSize="0.25em"
                     fontFamily="Poppins"

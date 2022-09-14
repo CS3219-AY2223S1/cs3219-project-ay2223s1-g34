@@ -2,7 +2,12 @@ import { v4 as uuidv4 } from "uuid";
 import { validationResult } from "express-validator";
 
 import { getIo } from "../socket.js";
-import { ormAddMatch, ormFindMatch, ormDeleteMatch, ormFindMatchByEmail } from "../model/match-orm.js";
+import {
+    ormAddMatch,
+    ormFindMatch,
+    ormDeleteMatch,
+    ormFindMatchByEmail,
+} from "../model/match-orm.js";
 
 const validateRequest = (res, req) => {
     try {
@@ -20,14 +25,15 @@ export async function submitMatch(req, res) {
         return;
     }
 
-    const { socketId, email, emailToInvite, difficultyLevel, createdAt } = req.body;
+    const { socketId, email, emailToInvite, difficultyLevel, createdAt } =
+        req.body;
 
     var match;
     if (emailToInvite) {
         // invite match
-        match = await ormFindMatchByEmail(email, createdAt);
+        match = await ormFindMatchByEmail(emailToInvite, createdAt);
     } else {
-        match = await ormFindMatch(difficultyLevel, createdAt);
+        match = await ormFindMatch(email, difficultyLevel, createdAt);
     }
 
     if (!match) {
@@ -38,13 +44,15 @@ export async function submitMatch(req, res) {
             createdAt
         );
 
-        console.log(newMatch);
+        console.log(`Match request from ${email} added`);
         return res
             .status(200)
-            .json({ message: `New match request is${newMatch ? "" : " not"} added` });
+            .json({
+                message: `New match request is${newMatch ? "" : " not"} added`,
+            });
     }
 
-    console.log("Match found");
+    console.log(`Match found for ${email}`);
     await ormDeleteMatch(match.id);
 
     const user1SocketId = match.socketId;
@@ -58,11 +66,13 @@ export async function submitMatch(req, res) {
 
     if (!user1Socket || !user2Socket) {
         getIo().to(user1Socket).to(user2Socket).emit(MATCHING_FAILURE);
+        console.log(`Matching attempt for ${email} failed`);
         return res.status(200).json({ message: "Matching failure" });
     }
 
     const roomId = uuidv4();
     user1Socket.emit(MATCHING_SUCCESS, { roomId });
     user2Socket.emit(MATCHING_SUCCESS, { roomId });
+    console.log(`Matching success ${email}`);
     return res.status(200).json({ message: "Matching success" });
 }
