@@ -5,11 +5,12 @@ import {
 	Navigate,
 } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import CreateAccountPage from "./components/CreateAccountPage";
-import SignInPage from "./components/SignInPage";
-import ForgotPasswordPage from "./components/ForgotPasswordPage";
-import ResetPasswordPage from "./components/ResetPasswordPage";
-import HomePage from "./components/HomePage";
+
+import CreateAccountPage from "./pages/CreateAccountPage";
+import SignInPage from "./pages/SignInPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import HomePage from "./pages/HomePage";
 
 const theme = createTheme({
 	palette: {

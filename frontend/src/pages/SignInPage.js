@@ -99,7 +99,7 @@ function SignInPage() {
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						sx={{ marginBottom: "0.3em" }}
-						inputProps={{ style: { fontSize: "0.3em" } }}
+						InputProps={{ style: { fontSize: "0.3em" } }}
 						InputLabelProps={{ style: { fontSize: "0.3em" } }}
 						autoFocus
 					></TextField>
@@ -112,7 +112,7 @@ function SignInPage() {
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						sx={{ marginBottom: "0.15em" }}
-						inputProps={{ style: { fontSize: "0.3em" } }}
+						InputProps={{ style: { fontSize: "0.3em" } }}
 						InputLabelProps={{ style: { fontSize: "0.3em" } }}
 						type="password"
 						autoFocus
