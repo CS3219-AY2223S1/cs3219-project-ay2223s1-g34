@@ -11,23 +11,47 @@ import {
 } from "@mui/material";
 
 import { useState, useEffect } from "react";
-import createSocket from "../socket-client"
+import io from 'socket.io-client'
 import axios from "axios";
 import { URL_COLLAB_SVC } from "../configs";
 import { STATUS_CODE_CREATED } from "../constants";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+
+function getEl(id) {
+    return document.getElementById(id)
+}
+
+
+function createSocket(id) {
+    var socket = io('http://localhost:8002', {
+    cors: {
+        origin: "*",
+    },
+    query: {
+        id: id
+    }
+    });
+    const editor = getEl("editor")
+    editor.addEventListener("keyup", (evt)=>
+    {
+        const text = editor.value
+        socket.emit('editor', {content:text, to: id})
+    })
+    socket.on('editor', (data) => {
+        editor.value = data
+    })
+    return socket
+}
 
 function SessionPage() {
-    const [codeField] = useState("")    
-    
-    useEffect(() => {
-        var socket = createSocket()
-        return ()=> {
-            socket.broadcast.emit()
-            socket.off()}
-    })
-    
+    const [codeField] = useState("")
+    let {id} = useParams();
 
+    useEffect(() => {
+        var socket = createSocket(id)
+        return ()=> {
+            socket.emit('disconnected')}
+    })
 
     return(
         <Box display="flex" flexDirection="row" height="100vh">

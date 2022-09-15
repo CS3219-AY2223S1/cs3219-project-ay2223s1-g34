@@ -11,7 +11,8 @@ function App() {
                     <Routes>
                         <Route exact path="/" element={<Navigate replace to="/signup" />}></Route>
                         <Route path="/signup" element={<SignupPage/>}/>
-                        <Route path="/session" element={<SessionPage/>}/>
+                        //temporary way to have session id passed to session page
+                        <Route path="/session/:id" element={<SessionPage/>}/>
                     </Routes>
                 </Router>
             </Box>
