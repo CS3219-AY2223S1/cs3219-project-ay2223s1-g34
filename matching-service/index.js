@@ -13,7 +13,7 @@ const app = express();
 // start routes
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors()); // config cors so that front-end can use
+app.use(cors({ origin: true, credentials: true })); // config cors so that front-end can use
 app.options("*", cors());
 
 app.use("/api/matching", router);
