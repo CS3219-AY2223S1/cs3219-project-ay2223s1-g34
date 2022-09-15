@@ -2,56 +2,57 @@ import {
 	Box,
 	Button,
 	TextField,
-    TextareaAutosize,
 	Typography,
-	Dialog,
-	DialogContent,
-	DialogActions,
-	DialogTitle
 } from "@mui/material";
 
-import { useState, useEffect } from "react";
+import { useEffect, useCallback} from "react";
 import io from 'socket.io-client'
-import axios from "axios";
-import { URL_COLLAB_SVC } from "../configs";
-import { STATUS_CODE_CREATED } from "../constants";
-import { useParams } from "react-router-dom";
+import { URI_COLLAB_SVC } from "../configs";
+import { useNavigate,useLocation } from "react-router-dom";
+const styles = {
+    editor: {
+      height: 200,
+      fontSize: "3em"
+    }
+  };
 
 function getEl(id) {
     return document.getElementById(id)
 }
 
+export default function SessionPage() {
+    let socket;
+    const location = useLocation();
+    const navigate = useNavigate();
 
-function createSocket(id) {
-    var socket = io('http://localhost:8002', {
-    cors: {
-        origin: "*",
-    },
-    query: {
-        id: id
+    const handleSession = useCallback(async () => {
+        const sessionId = location.state.roomId;
+        const state = location.state;
+        socket = io(URI_COLLAB_SVC, {
+            withCredentials: true,
+            credentials: "include",
+            query: {id: sessionId}
+        });
+
+        
+        const editor = getEl("editor")
+        editor.addEventListener("keyup", (evt)=>{
+            const text = editor.value
+            console.log(text)
+            socket.emit('editor', {content: text, to: sessionId})
+        })
+        socket.on('editor', (data) =>{
+            editor.value = data
+        })
+    }, [location,navigate]);
+    
+    function sessionClose() {
+        const state = location.state
+        socket.close()
+        navigate("/home",{state})
     }
-    });
-    const editor = getEl("editor")
-    editor.addEventListener("keyup", (evt)=>
-    {
-        const text = editor.value
-        socket.emit('editor', {content:text, to: id})
-    })
-    socket.on('editor', (data) => {
-        editor.value = data
-    })
-    return socket
-}
 
-function SessionPage() {
-    const [codeField] = useState("")
-    let {id} = useParams();
-
-    useEffect(() => {
-        var socket = createSocket(id)
-        return ()=> {
-            socket.emit('disconnected')}
-    })
+    useEffect(() => {handleSession()},[handleSession])
 
     return(
         <Box display="flex" flexDirection="row" height="100vh">
@@ -77,13 +78,12 @@ function SessionPage() {
                         multiline={true}
                         InputProps = {{readOnly: true}}
                         placeholder = "Chatbox here"
-                        minRows={20}
+                        height = "70%"
                     >
                     </TextField >
                     <TextField 
                         id = "chatfield"
-                        minRows={3}
-                        maxRows={3}
+                        height = "30%"
                         multiline={true}
                         placeholder = "Enter here"
                         sx={{marginTop: "0.2em", marginBottom:"0.2em"}}
@@ -92,7 +92,7 @@ function SessionPage() {
                     <Button 
                         id = "finish-button"
                         variant="contained"
-                        style={{width: 100 }}
+                        onClick = {sessionClose}
                     >
                         Finish
                     </Button>
@@ -105,11 +105,12 @@ function SessionPage() {
 					justifyContent="center"
 				>
                     <Typography>
-                        Question Here
+                        {location.state.question}
                     </Typography>
 					<TextField
                         id="editor"
-                        minRows={25}
+                        size="medium"
+                        rows={3}
                         placeholder="Enter your code here"
                         multiline={true}
 					>
@@ -119,4 +120,3 @@ function SessionPage() {
         </Box>
     )
 }
-export default SessionPage;

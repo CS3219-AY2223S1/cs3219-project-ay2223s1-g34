@@ -57,7 +57,8 @@ export default function WaitingPage() {
                 socket.off();
                 socket.disconnect();
                 const roomId = res.roomId;
-                navigate("/question", { state: { roomId } });
+                const question = "TEST QUESTION";
+                navigate("/session", { state: { roomId, question, email } });
                 // TODO navigate back to matching if matching cancelled
             } else {
                 setIsRematchVisible(true);
