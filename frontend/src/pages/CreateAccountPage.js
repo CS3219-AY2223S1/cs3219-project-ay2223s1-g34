@@ -4,48 +4,47 @@ import {
 	TextField,
 	Typography,
 	Dialog,
-	DialogActions,
 	DialogContent,
-	DialogTitle,
+	DialogActions,
+	DialogTitle
 } from "@mui/material";
+
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
-import { useNavigate, useLocation } from "react-router-dom";
-import { STATUS_CODE_SUCCESS } from "../constants";
+import { STATUS_CODE_CREATED } from "../constants";
+import { useNavigate } from "react-router-dom";
 
-function ResetPasswordPage() {
+function CreateAccountPage() {
+	const [username, setUsername] = useState("");
+	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [errorMessage, setErrorMessage] = useState("");
-	const [isOpen, setIsOpen] = useState(false);
-
+	const [isAlertOpen, setAlertOpen] = useState(false);
 	const navigate = useNavigate();
-	const location = useLocation();
 
-	const handleOpen = () => {
-		setIsOpen(true);
+	const handleOpenAlert = () => {
+		setAlertOpen(true);
 	};
-
-	const handleClose = () => {
+	const handleBack = async () => {
 		navigate("/signin");
 	};
 
-	const handleResetPassword = async () => {
+	const handleSignup = async () => {
 		const res = await axios
-			.put(
-				URL_USER_SVC +
-					"/resetpw" +
-					"/" +
-					location.pathname.split("/")[2],
-				{ new: password }
+			.post(
+				URL_USER_SVC + "/createacc",
+				{ username, email, password },
+				{ withCredentials: true, credentials: "include" }
 			)
 			.catch((err) => {
-				console.log(err);
 				setErrorMessage(err.response.data.message);
 			});
-		if (res && res.status === STATUS_CODE_SUCCESS) {
-			handleOpen();
+
+		if (res && res.status === STATUS_CODE_CREATED) {
+			handleOpenAlert();
 		}
 	};
 
@@ -53,11 +52,18 @@ function ResetPasswordPage() {
 		<Box display="flex" flexDirection="row" height="100vh">
 			<Box
 				display="flex"
-				flexDirection="column"
+				flexDirection="row"
 				backgroundColor="secondary.main"
 				width="50%"
 				alignItems="center"
 			>
+				<Box alignSelf="flex-start" justifyItems="flex-start">
+					<Button onClick={handleBack} disableRipple>
+						<ArrowBackIcon
+							sx={{ fontSize: "0.75em" }}
+						></ArrowBackIcon>
+					</Button>
+				</Box>
 				<Box
 					display="flex"
 					flexDirection="column"
@@ -72,18 +78,44 @@ function ResetPasswordPage() {
 						color="primary.main"
 						marginBottom="1.5em"
 					>
-						Reset Password
+						Create Account
 					</Typography>
 
 					<TextField
-						label="New Password"
+						label="Username"
+						fullWidth
+						size="small"
+						variant="standard"
+						value={username}
+						onChange={(e) => setUsername(e.target.value)}
+						sx={{ marginBottom: "0.15em" }}
+						InputProps={{ style: { fontSize: "0.3em" } }}
+						InputLabelProps={{ style: { fontSize: "0.3em" } }}
+						autoFocus
+					></TextField>
+
+					<TextField
+						label="Email Address"
+						fullWidth
+						size="small"
+						variant="standard"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						sx={{ marginBottom: "0.3em" }}
+						InputProps={{ style: { fontSize: "0.3em" } }}
+						InputLabelProps={{ style: { fontSize: "0.3em" } }}
+						autoFocus
+					></TextField>
+
+					<TextField
+						label="Password"
 						fullWidth
 						size="small"
 						variant="standard"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						sx={{ marginBottom: "1em" }}
-						inputProps={{ style: { fontSize: "0.3em" } }}
+						InputProps={{ style: { fontSize: "0.3em" } }}
 						InputLabelProps={{ style: { fontSize: "0.3em" } }}
 						type="password"
 						autoFocus
@@ -100,7 +132,7 @@ function ResetPasswordPage() {
 					</Typography>
 
 					<Button
-						onClick={handleResetPassword}
+						onClick={handleSignup}
 						color="primary"
 						size="large"
 						variant={"contained"}
@@ -110,8 +142,40 @@ function ResetPasswordPage() {
 							letterSpacing: "1.5px",
 						}}
 					>
-						Reset Password
+						Sign Up
 					</Button>
+
+					<Typography
+						fontSize="0.25em"
+						fontFamily="Poppins"
+						color="primary.main"
+						marginTop="1em"
+						align="center"
+						sx={{ opacity: "70%" }}
+					>
+						Already have an account?
+						<Button
+							onClick={handleBack}
+							color="primary"
+							size="small"
+							sx={{
+								minWidth: "0",
+								padding: "0 0.5 0.5 0",
+								textDecoration: "underline",
+								fontFamily: "Poppins",
+								fontSize: "1em",
+								textTransform: "none",
+								"&:hover": {
+									backgroundColor: "#FFFFFF",
+									textDecoration: "underline",
+									opacity: "100%",
+									fontWeight: "700",
+								},
+							}}
+						>
+							Sign in
+						</Button>
+					</Typography>
 				</Box>
 			</Box>
 
@@ -133,20 +197,18 @@ function ResetPasswordPage() {
 				>
 					PeerPrep
 				</Typography>
-
 				<Typography
 					fontSize="0.5em"
 					fontFamily="Poppins"
 					color="secondary.main"
 					align="center"
 					marginTop="1em"
-					width="60%"
 				>
 					Some text or image about PeerPrep
 				</Typography>
 			</Box>
 
-			<Dialog open={isOpen}>
+			<Dialog open={isAlertOpen}>
 				<DialogTitle
 					sx={{
 						fontWeight: "700",
@@ -156,23 +218,24 @@ function ResetPasswordPage() {
 				>
 					Success!
 				</DialogTitle>
+
 				<DialogContent
 					sx={{ fontSize: "0.3em", fontFamily: "Poppins" }}
 				>
-					Password has been reset
+					What are you waiting for? Hurry up and sign in now!
 				</DialogContent>
+
 				<DialogActions>
 					<Button
-						onClick={handleClose}
+						onClick={handleBack}
 						autoFocus
-						variant="contained"
 						sx={{
 							textTransform: "none",
 							fontSize: "0.3em",
 							fontFamily: "Poppins",
 						}}
 					>
-						Ok
+						Sign In
 					</Button>
 				</DialogActions>
 			</Dialog>
@@ -180,4 +243,4 @@ function ResetPasswordPage() {
 	);
 }
 
-export default ResetPasswordPage;
+export default CreateAccountPage;

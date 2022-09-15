@@ -4,47 +4,48 @@ import {
 	TextField,
 	Typography,
 	Dialog,
-	DialogContent,
 	DialogActions,
-	DialogTitle
+	DialogContent,
+	DialogTitle,
 } from "@mui/material";
-
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
-import { STATUS_CODE_CREATED } from "../constants";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { STATUS_CODE_SUCCESS } from "../constants";
 
-function CreateAccountPage() {
-	const [username, setUsername] = useState("");
-	const [email, setEmail] = useState("");
+function ResetPasswordPage() {
 	const [password, setPassword] = useState("");
 	const [errorMessage, setErrorMessage] = useState("");
-	const [isAlertOpen, setAlertOpen] = useState(false);
-	const navigate = useNavigate();
+	const [isOpen, setIsOpen] = useState(false);
 
-	const handleOpenAlert = () => {
-		setAlertOpen(true);
+	const navigate = useNavigate();
+	const location = useLocation();
+
+	const handleOpen = () => {
+		setIsOpen(true);
 	};
-	const handleBack = async () => {
+
+	const handleClose = () => {
 		navigate("/signin");
 	};
 
-	const handleSignup = async () => {
+	const handleResetPassword = async () => {
 		const res = await axios
-			.post(
-				URL_USER_SVC + "/createacc",
-				{ username, email, password },
-				{ withCredentials: true, credentials: "include" }
+			.put(
+				URL_USER_SVC +
+					"/resetpw" +
+					"/" +
+					location.pathname.split("/")[2],
+				{ new: password }
 			)
 			.catch((err) => {
+				console.log(err);
 				setErrorMessage(err.response.data.message);
 			});
-
-		if (res && res.status === STATUS_CODE_CREATED) {
-			handleOpenAlert();
+		if (res && res.status === STATUS_CODE_SUCCESS) {
+			handleOpen();
 		}
 	};
 
@@ -52,18 +53,11 @@ function CreateAccountPage() {
 		<Box display="flex" flexDirection="row" height="100vh">
 			<Box
 				display="flex"
-				flexDirection="row"
+				flexDirection="column"
 				backgroundColor="secondary.main"
 				width="50%"
 				alignItems="center"
 			>
-				<Box alignSelf="flex-start" justifyItems="flex-start">
-					<Button onClick={handleBack} disableRipple>
-						<ArrowBackIcon
-							sx={{ fontSize: "0.75em" }}
-						></ArrowBackIcon>
-					</Button>
-				</Box>
 				<Box
 					display="flex"
 					flexDirection="column"
@@ -78,44 +72,18 @@ function CreateAccountPage() {
 						color="primary.main"
 						marginBottom="1.5em"
 					>
-						Create Account
+						Reset Password
 					</Typography>
 
 					<TextField
-						label="Username"
-						fullWidth
-						size="small"
-						variant="standard"
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
-						sx={{ marginBottom: "0.15em" }}
-						inputProps={{ style: { fontSize: "0.3em" } }}
-						InputLabelProps={{ style: { fontSize: "0.3em" } }}
-						autoFocus
-					></TextField>
-
-					<TextField
-						label="Email Address"
-						fullWidth
-						size="small"
-						variant="standard"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						sx={{ marginBottom: "0.3em" }}
-						inputProps={{ style: { fontSize: "0.3em" } }}
-						InputLabelProps={{ style: { fontSize: "0.3em" } }}
-						autoFocus
-					></TextField>
-
-					<TextField
-						label="Password"
+						label="New Password"
 						fullWidth
 						size="small"
 						variant="standard"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						sx={{ marginBottom: "1em" }}
-						inputProps={{ style: { fontSize: "0.3em" } }}
+						InputProps={{ style: { fontSize: "0.3em" } }}
 						InputLabelProps={{ style: { fontSize: "0.3em" } }}
 						type="password"
 						autoFocus
@@ -132,7 +100,7 @@ function CreateAccountPage() {
 					</Typography>
 
 					<Button
-						onClick={handleSignup}
+						onClick={handleResetPassword}
 						color="primary"
 						size="large"
 						variant={"contained"}
@@ -142,40 +110,8 @@ function CreateAccountPage() {
 							letterSpacing: "1.5px",
 						}}
 					>
-						Sign Up
+						Reset Password
 					</Button>
-
-					<Typography
-						fontSize="0.25em"
-						fontFamily="Poppins"
-						color="primary.main"
-						marginTop="1em"
-						align="center"
-						sx={{ opacity: "70%" }}
-					>
-						Already have an account?
-						<Button
-							onClick={handleBack}
-							color="primary"
-							size="small"
-							sx={{
-								minWidth: "0",
-								padding: "0 0.5 0.5 0",
-								textDecoration: "underline",
-								fontFamily: "Poppins",
-								fontSize: "1em",
-								textTransform: "none",
-								"&:hover": {
-									backgroundColor: "#FFFFFF",
-									textDecoration: "underline",
-									opacity: "100%",
-									fontWeight: "700",
-								},
-							}}
-						>
-							Sign in
-						</Button>
-					</Typography>
 				</Box>
 			</Box>
 
@@ -197,18 +133,20 @@ function CreateAccountPage() {
 				>
 					PeerPrep
 				</Typography>
+
 				<Typography
 					fontSize="0.5em"
 					fontFamily="Poppins"
 					color="secondary.main"
 					align="center"
 					marginTop="1em"
+					width="60%"
 				>
 					Some text or image about PeerPrep
 				</Typography>
 			</Box>
 
-			<Dialog open={isAlertOpen}>
+			<Dialog open={isOpen}>
 				<DialogTitle
 					sx={{
 						fontWeight: "700",
@@ -218,24 +156,23 @@ function CreateAccountPage() {
 				>
 					Success!
 				</DialogTitle>
-
 				<DialogContent
 					sx={{ fontSize: "0.3em", fontFamily: "Poppins" }}
 				>
-					What are you waiting for? Hurry up and sign in now!
+					Password has been reset
 				</DialogContent>
-
 				<DialogActions>
 					<Button
-						onClick={handleBack}
+						onClick={handleClose}
 						autoFocus
+						variant="contained"
 						sx={{
 							textTransform: "none",
 							fontSize: "0.3em",
 							fontFamily: "Poppins",
 						}}
 					>
-						Sign In
+						Ok
 					</Button>
 				</DialogActions>
 			</Dialog>
@@ -243,4 +180,4 @@ function CreateAccountPage() {
 	);
 }
 
-export default CreateAccountPage;
+export default ResetPasswordPage;

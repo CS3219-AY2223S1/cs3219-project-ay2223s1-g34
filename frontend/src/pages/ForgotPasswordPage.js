@@ -91,7 +91,7 @@ function ForgotPasswordPage() {
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						sx={{ marginBottom: "1em" }}
-						inputProps={{ style: { fontSize: "0.3em" } }}
+						InputProps={{ style: { fontSize: "0.3em" } }}
 						InputLabelProps={{ style: { fontSize: "0.3em" } }}
 						autoFocus
 					></TextField>
