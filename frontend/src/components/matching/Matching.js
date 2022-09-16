@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 
 import { Box, Button, TextField, Typography, MenuItem } from "@mui/material";
 
-import { DIFFICULTY_LEVELS } from "../../constants";
+import { DIFFICULTY_LEVELS, TOPICS } from "../../constants";
 
 function Matching({ email }) {
     const [isInviteVisible, setIsInviteVisible] = useState("");
     // TODO add topics
 
     const [difficultyLevel, setDifficultyLevel] = useState("");
+    const [topic, setTopic] = useState("");
     const [emailToInvite, setEmailToInvite] = useState("");
 
     const [errorMessage, setErrorMessage] = useState("");
@@ -21,10 +22,16 @@ function Matching({ email }) {
 
         if (!difficultyLevel) {
             setErrorMessage("Select a difficulty level");
+            return;
+        }
+
+        if (!topic) {
+            setErrorMessage("Select a topic");
+            return;
         }
 
         navigate("/waiting", {
-            state: { email, difficultyLevel, emailToInvite },
+            state: { email, difficultyLevel, topic, emailToInvite },
         });
     };
 
@@ -60,6 +67,31 @@ function Matching({ email }) {
                     autoFocus
                 >
                     {DIFFICULTY_LEVELS.map((option) => (
+                        <MenuItem
+                            key={option.value}
+                            value={option.value}
+                            size="medium"
+                            sx={{ fontSize: "0.4em" }}
+                        >
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <TextField
+                    select
+                    label="Topic"
+                    defaultValue={TOPICS[0]}
+                    fullWidth
+                    size="medium"
+                    variant="standard"
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                    sx={{ marginBottom: "0.4em" }}
+                    InputProps={{ style: { fontSize: "0.4em" } }}
+                    InputLabelProps={{ style: { fontSize: "0.4em" } }}
+                    autoFocus
+                >
+                    {TOPICS.map((option) => (
                         <MenuItem
                             key={option.value}
                             value={option.value}
