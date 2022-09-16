@@ -12,6 +12,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import HomePage from "./pages/HomePage";
 import WaitingPage from "./pages/WaitingPage";
+import SessionPage from "./pages/SessionPage";
 
 const theme = createTheme({
     palette: {
@@ -50,6 +51,8 @@ function App() {
                         />
                         <Route path="/home" element={<HomePage />} />
                         <Route path="/waiting" element={<WaitingPage />} />
+                        <Route path="/session" element={<SessionPage />}/>
+                        
                     </Routes>
                 </Router>
             </div>
