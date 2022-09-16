@@ -3,14 +3,21 @@ import {
     findMatch,
     findMatchByEmail,
     deleteMatch,
-} from "./repository.js";
+} from "../repository/repository.js";
 
-export async function ormAddMatch(socketId, email, difficultyLevel, createdAt) {
+export async function ormAddMatch(
+    socketId,
+    email,
+    difficultyLevel,
+    topic,
+    createdAt
+) {
     try {
         const newMatch = await addMatch({
             socketId,
             email,
             difficultyLevel,
+            topic,
             createdAt,
         });
         newMatch.save();
@@ -20,8 +27,8 @@ export async function ormAddMatch(socketId, email, difficultyLevel, createdAt) {
     }
 }
 
-export async function ormFindMatch(email, difficultyLevel, createdAt) {
-    return findMatch(email, difficultyLevel, createdAt).catch((err) => {
+export async function ormFindMatch(email, difficultyLevel, topic, createdAt) {
+    return findMatch(email, difficultyLevel, topic, createdAt).catch((err) => {
         console.log(err);
         return { err };
     });

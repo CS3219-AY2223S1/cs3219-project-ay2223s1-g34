@@ -16,3 +16,5 @@ export const DIFFICULTY_LEVELS = [
         label: "Hard",
     },
 ];
+
+export const TOPICS = [{ value: 1, label: "I/O" }];

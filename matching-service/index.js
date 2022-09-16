@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { createServer } from "http";
 
-import router from "./api/routes.js";
+import router from "./routes/routes.js";
 import { initIo } from "./socket.js";
 
 const PORT = process.env.PORT || 8001;

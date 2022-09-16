@@ -25,15 +25,21 @@ export async function submitMatch(req, res) {
         return;
     }
 
-    const { socketId, email, emailToInvite, difficultyLevel, createdAt } =
-        req.body;
+    const {
+        socketId,
+        email,
+        emailToInvite,
+        difficultyLevel,
+        topic,
+        createdAt,
+    } = req.body;
 
     var match;
     if (emailToInvite) {
         // invite match
         match = await ormFindMatchByEmail(emailToInvite, createdAt);
     } else {
-        match = await ormFindMatch(email, difficultyLevel, createdAt);
+        match = await ormFindMatch(email, difficultyLevel, topic, createdAt);
     }
 
     if (!match || match.err) {
@@ -41,6 +47,7 @@ export async function submitMatch(req, res) {
             socketId,
             email,
             difficultyLevel,
+            topic,
             createdAt
         );
 

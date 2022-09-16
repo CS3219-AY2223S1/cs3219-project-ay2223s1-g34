@@ -23,6 +23,7 @@ export default function WaitingPage() {
     const handleMatching = useCallback(async () => {
         const email = location.state.email;
         const difficultyLevel = location.state.difficultyLevel;
+        const topic = location.state.topic;
         const emailToInvite = location.state.emailToInvite;
 
         const socket = io(URI_MATCHING_SVC, {
@@ -36,6 +37,7 @@ export default function WaitingPage() {
                 socketId: socket.id,
                 email,
                 difficultyLevel,
+                topic,
                 emailToInvite,
                 createdAt: new Date().toISOString(),
             };

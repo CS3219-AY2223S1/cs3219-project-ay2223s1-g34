@@ -13,6 +13,10 @@ let MatchSchema = new Schema({
         type: Number,
         required: true,
     },
+    topic: {
+        type: Number,
+        required: true,
+    },
     createdAt: {
         type: Date,
         default: Date.now,

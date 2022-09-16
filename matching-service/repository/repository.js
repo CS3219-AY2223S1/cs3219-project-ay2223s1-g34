@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import MatchModel from "./match-model.js";
+import MatchModel from "../model/match-model.js";
 
 let mongoDB =
     process.env.ENV == "PROD"
@@ -23,18 +23,20 @@ export async function addMatch(params) {
 
     match.socketId = params.socketId;
     match.difficultyLevel = params.difficultyLevel;
+    match.topic = params.topic;
     match.createdAt = params.createdAt;
     return match;
 }
 
 const MATCHING_TIMEOUT = 30 * 1000;
 
-export async function findMatch(email, difficultyLevel, createdAt) {
+export async function findMatch(email, difficultyLevel, topic, createdAt) {
     return MatchModel.findOne({
         email: {
             $ne: email,
         },
         difficultyLevel,
+        topic,
         createdAt: {
             $gte: new Date(createdAt.getTime() - MATCHING_TIMEOUT),
         },
