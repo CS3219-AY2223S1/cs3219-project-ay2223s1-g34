@@ -10,7 +10,7 @@ app.options('*', cors())
 
 const router = express.Router()
 router.get('/', (_, res) => res.send('Hello World from question-service'))
-router.post('/', processQuestionRequest)
+router.get('/getQuestion', processQuestionRequest)
 
 app.use('/api/question', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')
