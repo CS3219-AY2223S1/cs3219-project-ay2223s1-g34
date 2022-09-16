@@ -10,8 +10,8 @@ export async function getQuestion(req, res) {
             if (resp.err) {
                 return res.status(400).json({ message: 'Could not create a new user!' });
             } else if (resp) {
-                console.log(`Created new user ${topic} successfully!`)
-                return res.status(201).json(resp);
+                console.log(`Found question with difficulty ${difficulty} and topic ${topic} successfully!`)
+                return res.status(201).json({ question: resp });
             } else {
                 return res.status(400).json({ message: 'Question could not be fetched for some unknown reason.' });
             }
