@@ -8,7 +8,7 @@ export async function getQuestion(req, res) {
             const resp = await _getQuestion(difficulty, topic);
             console.log(resp);
             if (resp.err) {
-                return res.status(400).json({ message: 'Could not create a new user!' });
+                return res.status(400).json({ message: 'Could not get a question!' });
             } else if (resp) {
                 console.log(`Found question with difficulty ${difficulty} and topic ${topic} successfully!`)
                 return res.status(201).json({ question: resp });

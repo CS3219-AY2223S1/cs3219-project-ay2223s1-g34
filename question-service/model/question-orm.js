@@ -5,7 +5,12 @@ export async function ormGetQuestion(difficulty, topic) {
     try {
         const question = await getQuestion(difficulty, topic);
         if (question) { // If question exists, return its JSON
-            return question.contents;
+            return {
+                'QID': question.QID,
+                'difficulty': question.difficulty,
+                'topic': question.topic,
+                'contents': question.contents
+            };
         } else {        // If question does not exist don't return anything
             return null;
         }
