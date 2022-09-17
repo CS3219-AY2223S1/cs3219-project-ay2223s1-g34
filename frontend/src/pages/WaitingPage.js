@@ -5,8 +5,8 @@ import io from "socket.io-client";
 
 import { Box, Button, Typography } from "@mui/material";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
-
-import { URI_MATCHING_SVC, URL_MATCHING_SVC } from "../configs";
+import {DIFFICULTY_LEVELS, TOPICS} from "../constants"
+import { URI_MATCHING_SVC, URL_MATCHING_SVC, URL_QUESTION_SVC } from "../configs";
 import WaitingTimeRenderer from "../components/matching/WaitingTimeRenderer";
 import RematchDialog from "../components/matching/RematchDialog";
 
@@ -59,7 +59,17 @@ export default function WaitingPage() {
                 socket.off();
                 socket.disconnect();
                 const roomId = res.roomId;
-                const question = "TEST QUESTION";
+                var question;
+                await axios
+                .post(URL_QUESTION_SVC+"/getQuestion", 
+                {'difficulty':DIFFICULTY_LEVELS.find(item=>item.value===difficultyLevel).label, 
+                    'topic':TOPICS.find(item=>item.value===topic).label}, {
+                    withCredentials: true,
+                    credentials: "include",
+                })
+                .then((resp)=>{
+                    question=resp.data.question.contents})
+
                 navigate("/session", { state: { roomId, question, email } });
                 // TODO navigate back to matching if matching cancelled
             } else {
