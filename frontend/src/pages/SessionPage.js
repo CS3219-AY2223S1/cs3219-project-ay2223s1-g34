@@ -38,7 +38,6 @@ export default function SessionPage() {
         const editor = getEl("editor")
         editor.addEventListener("keyup", (evt)=>{
             const text = editor.value
-            console.log(text)
             socket.emit('editor', {content: text, to: sessionId})
         })
         socket.on('editor', (data) =>{
