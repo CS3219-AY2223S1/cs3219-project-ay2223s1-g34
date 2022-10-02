@@ -6,15 +6,16 @@ import {
 	Dialog,
 	DialogContent,
 	DialogActions,
-	DialogTitle
+	DialogTitle,
 } from "@mui/material";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import LoadAnim from "../components/user/LoadAnim";
 
 import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
-import { STATUS_CODE_CREATED } from "../constants";
+import { STATUS_CODE_CREATED, STATUS_CODE_SUCCESS } from "../constants";
 import { useNavigate } from "react-router-dom";
 
 function CreateAccountPage() {
@@ -23,6 +24,8 @@ function CreateAccountPage() {
 	const [password, setPassword] = useState("");
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isAlertOpen, setAlertOpen] = useState(false);
+	const [isLoading, setLoadingOpen] = useState(false);
+
 	const navigate = useNavigate();
 
 	const handleOpenAlert = () => {
@@ -33,6 +36,7 @@ function CreateAccountPage() {
 	};
 
 	const handleSignup = async () => {
+		setLoadingOpen(true);
 		const res = await axios
 			.post(
 				URL_USER_SVC + "/createacc",
@@ -44,7 +48,16 @@ function CreateAccountPage() {
 			});
 
 		if (res && res.status === STATUS_CODE_CREATED) {
-			handleOpenAlert();
+			const res2 = await axios
+				.post(URL_USER_SVC + "/sendverify" + "/" + email)
+				.catch((err) => {
+					setErrorMessage(err.response.data.message);
+				});
+
+			if (res2 && res2.status === STATUS_CODE_SUCCESS) {
+				setLoadingOpen(false);
+				handleOpenAlert();
+			}
 		}
 	};
 
@@ -216,17 +229,19 @@ function CreateAccountPage() {
 						fontFamily: "Poppins",
 					}}
 				>
-					Success!
+					Verify Email
 				</DialogTitle>
 
 				<DialogContent
 					sx={{ fontSize: "0.3em", fontFamily: "Poppins" }}
 				>
-					What are you waiting for? Hurry up and sign in now!
+					We have sent an email to you to {email} to verify your
+					account!
 				</DialogContent>
 
 				<DialogActions>
 					<Button
+						variant={"contained"}
 						onClick={handleBack}
 						autoFocus
 						sx={{
@@ -239,6 +254,8 @@ function CreateAccountPage() {
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+			<LoadAnim open={isLoading} />
 		</Box>
 	);
 }

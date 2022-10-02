@@ -5,6 +5,8 @@ import { ormChangePassword as _changePassword } from "../model/user-orm.js";
 import { ormLogoutUser as _logoutUser } from "../model/user-orm.js";
 import { ormForgotPassword as _forgotPassword } from "../model/user-orm.js";
 import { ormResetPassword as _resetPassword } from "../model/user-orm.js";
+import { ormVerifyEmail as _verifyEmail } from "../model/user-orm.js";
+import { ormSendVerifyEmail as _sendVerifyEmail } from "../model/user-orm.js";
 import jwt from "jsonwebtoken";
 
 // [POST - Public] Create user with username, email and password
@@ -55,10 +57,10 @@ export async function signIn(req, res) {
 					token: `${token}`,
 				});
 			} else {
-				console.log(`Username or email address incorrect!`);
-				return res
-					.status(400)
-					.json({ message: "Email address or password incorrect!" });
+				console.log(`Username or email address incorrect/unverified!`);
+				return res.status(400).json({
+					message: "Email address or password incorrect/unverified!",
+				});
 			}
 		} else {
 			return res
@@ -165,6 +167,59 @@ export async function resetPassword(req, res) {
 	}
 }
 
+// [POST - Public] Send Verify Email
+export async function sendVerifyEmail(req, res) {
+	try {
+		const token = generateToken(req.params.email);
+		const resp = await _sendVerifyEmail(req.params.email, token);
+		if (resp.err) {
+			return res.status(400).json({ message: "Invalid email" });
+		}
+		if (resp) {
+			console.log(`Email verification email sent!`);
+			return res.status(200).json({
+				message: `Email verification email sent!`,
+			});
+		} else {
+			console.log(`Email verification email failed to sent!`);
+			return res.status(500).json({
+				message: "Email verification email failed to sent!",
+			});
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ message: "Unknown error" });
+	}
+}
+
+// [POST - Private] Verify Email
+export async function verifyEmail(req, res) {
+	try {
+		const token = req.params.token;
+		if (token) {
+			const resp = await _verifyEmail(token);
+			if (resp) {
+				console.log(`Email verified successfull!`);
+				return res
+					.status(200)
+					.json({ message: `Email verified successfull!` });
+			} else {
+				console.log(`Email verified failed!`);
+				return res
+					.status(400)
+					.json({ message: `Email verified failed!` });
+			}
+		} else {
+			return res
+				.status(400)
+				.json({ message: "Please fill up all fields!" });
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ message: "Unknown Error" });
+	}
+}
+
 // [POST - Private] Logout
 export async function logout(req, res) {
 	try {
@@ -198,7 +253,14 @@ export async function forgotPassword(req, res) {
 	}
 }
 
-// Generate JWT
+
+export async function auth(req, res) {
+	console.log(`User is authenticated!`);
+	return res.status(200).json({
+		message: `User is authenticated!`,
+	});}
+
+// Generate JWT (Session)
 const generateToken = (email) => {
 	return jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };

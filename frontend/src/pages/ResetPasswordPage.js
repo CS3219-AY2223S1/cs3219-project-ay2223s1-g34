@@ -172,7 +172,7 @@ function ResetPasswordPage() {
 							fontFamily: "Poppins",
 						}}
 					>
-						Ok
+						Sign In
 					</Button>
 				</DialogActions>
 			</Dialog>

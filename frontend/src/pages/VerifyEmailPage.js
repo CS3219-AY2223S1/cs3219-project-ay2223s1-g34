@@ -1,7 +1,6 @@
 import {
 	Box,
 	Button,
-	TextField,
 	Typography,
 	Dialog,
 	DialogActions,
@@ -9,26 +8,18 @@ import {
 	DialogTitle,
 } from "@mui/material";
 
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import LoadAnim from "../components/user/LoadAnim";
-
 import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { STATUS_CODE_SUCCESS } from "../constants";
 
-function ForgotPasswordPage() {
-	const [email, setEmail] = useState("");
-	const [errorMessage, setErrorMessage] = useState("");
+function VerifyEmailPage() {
 	const [isOpen, setIsOpen] = useState(false);
-	const [isLoading, setLoadingOpen] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const navigate = useNavigate();
-
-	const handleBack = async () => {
-		navigate("/signin");
-	};
+	const location = useLocation();
 
 	const handleOpen = () => {
 		setIsOpen(true);
@@ -38,17 +29,16 @@ function ForgotPasswordPage() {
 		navigate("/signin");
 	};
 
-	const handleForgotPassword = async () => {
-		setLoadingOpen(true);
+	const handleVerifyEmail = async () => {
 		const res = await axios
-			.post(URL_USER_SVC + "/forgotpw" + "/" + email)
+			.post(
+				URL_USER_SVC + "/verify" + "/" + location.pathname.split("/")[2]
+			)
 			.catch((err) => {
 				console.log(err);
 				setErrorMessage(err.response.data.message);
 			});
-
 		if (res && res.status === STATUS_CODE_SUCCESS) {
-			setLoadingOpen(false);
 			handleOpen();
 		}
 	};
@@ -62,14 +52,6 @@ function ForgotPasswordPage() {
 				width="50%"
 				alignItems="center"
 			>
-				<Box alignSelf="flex-start" justifyItems="center">
-					<Button disableRipple onClick={handleBack}>
-						<ArrowBackIcon
-							sx={{ fontSize: "0.75em" }}
-						></ArrowBackIcon>
-					</Button>
-				</Box>
-
 				<Box
 					display="flex"
 					flexDirection="column"
@@ -84,21 +66,8 @@ function ForgotPasswordPage() {
 						color="primary.main"
 						marginBottom="1.5em"
 					>
-						Forgot Password
+						Verify Email
 					</Typography>
-
-					<TextField
-						label="Email Address"
-						fullWidth
-						size="small"
-						variant="standard"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						sx={{ marginBottom: "1em" }}
-						InputProps={{ style: { fontSize: "0.3em" } }}
-						InputLabelProps={{ style: { fontSize: "0.3em" } }}
-						autoFocus
-					></TextField>
 
 					<Typography
 						fontSize="0.25em"
@@ -111,7 +80,7 @@ function ForgotPasswordPage() {
 					</Typography>
 
 					<Button
-						onClick={handleForgotPassword}
+						onClick={handleVerifyEmail}
 						color="primary"
 						size="large"
 						variant={"contained"}
@@ -121,7 +90,7 @@ function ForgotPasswordPage() {
 							letterSpacing: "1.5px",
 						}}
 					>
-						Reset Password
+						Verify Email
 					</Button>
 				</Box>
 			</Box>
@@ -170,7 +139,7 @@ function ForgotPasswordPage() {
 				<DialogContent
 					sx={{ fontSize: "0.3em", fontFamily: "Poppins" }}
 				>
-					An email has been sent to reset your password
+					Email has been verified!
 				</DialogContent>
 				<DialogActions>
 					<Button
@@ -187,9 +156,8 @@ function ForgotPasswordPage() {
 					</Button>
 				</DialogActions>
 			</Dialog>
-			<LoadAnim open={isLoading} />
 		</Box>
 	);
 }
 
-export default ForgotPasswordPage;
+export default VerifyEmailPage;

@@ -39,6 +39,10 @@ let UserModelSchema = new Schema({
 	resetTokenExpiry: {
 		type: String,
 	},
+	verified: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 UserModelSchema.methods.getResetPasswordToken = function () {
