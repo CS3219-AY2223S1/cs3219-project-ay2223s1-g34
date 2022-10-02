@@ -9,12 +9,6 @@ import { useEffect, useCallback} from "react";
 import io from 'socket.io-client'
 import { URI_COLLAB_SVC } from "../configs";
 import { useNavigate,useLocation } from "react-router-dom";
-const styles = {
-    editor: {
-      height: 200,
-      fontSize: "3em"
-    }
-  };
 
 function getEl(id) {
     return document.getElementById(id)
@@ -27,21 +21,38 @@ export default function SessionPage() {
 
     const handleSession = useCallback(async () => {
         const sessionId = location.state.roomId;
-        const state = location.state;
+
         socket = io(URI_COLLAB_SVC, {
             withCredentials: true,
             credentials: "include",
             query: {id: sessionId}
         });
 
-        
         const editor = getEl("editor")
+        const chatfield = getEl("chatfield")
+        const chatbox = getEl("chatbox")
         editor.addEventListener("keyup", (evt)=>{
             const text = editor.value
             socket.emit('editor', {content: text, to: sessionId})
         })
+        chatfield.addEventListener("keypress", (evt) => {
+            evt.preventDefault()
+            if (evt.key === "Enter" && chatfield.value) {
+                chatbox.value += "Me: " + chatfield.value +"\n"
+                chatbox.scrollTo(0,chatbox.scrollHeight);
+                socket.emit('chat',{message:chatfield.value, to: sessionId})
+                chatfield.value = "";
+            } else if(evt.key !== "Enter") {
+                chatfield.value += evt.key
+            }
+        })
         socket.on('editor', (data) =>{
             editor.value = data
+        })
+
+        socket.on('chat', (data) => {
+            chatbox.value += "Partner: " + data +"\n"
+            chatbox.scrollTo(0,chatbox.scrollHeight);
         })
     }, [location,navigate]);
     
@@ -75,6 +86,8 @@ export default function SessionPage() {
                     <TextField 
                         id = "chatbox"
                         multiline={true}
+                        minRows={5}
+                        maxRows={5}
                         InputProps = {{readOnly: true}}
                         placeholder = "Chatbox here"
                         height = "70%"
@@ -83,7 +96,8 @@ export default function SessionPage() {
                     <TextField 
                         id = "chatfield"
                         height = "30%"
-                        multiline={true}
+                        multiline
+                        variant="standard"
                         placeholder = "Enter here"
                         sx={{marginTop: "0.2em", marginBottom:"0.2em"}}
                     >

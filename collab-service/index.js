@@ -4,6 +4,7 @@ import cors from 'cors';
 import { createServer } from 'http'
 import {Server} from 'socket.io'
 import "dotenv/config";
+import { SocketAddress } from 'net';
 
 const router = express.Router()
 const app = express();
@@ -28,10 +29,11 @@ io.on('connection', (socket) => {
     log('Connected')
     var id = socket.handshake.query.id;
     socket.join(id)
-    log(`Joined room ${id}`)
     socket.on('editor', ({content, to})=> {
-        log(`${content} from ${to}`)
         socket.to(to).emit('editor', content)
+    })
+    socket.on('chat', ({message, to}) => {
+        socket.to(to).emit('chat', message)
     })
 })
 
