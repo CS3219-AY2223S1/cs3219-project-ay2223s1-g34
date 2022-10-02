@@ -179,6 +179,7 @@ export async function sendVerifyEmail(req, res) {
 			console.log(`Email verification email sent!`);
 			return res.status(200).json({
 				message: `Email verification email sent!`,
+				token: token,
 			});
 		} else {
 			console.log(`Email verification email failed to sent!`);
@@ -253,12 +254,12 @@ export async function forgotPassword(req, res) {
 	}
 }
 
-
 export async function auth(req, res) {
 	console.log(`User is authenticated!`);
 	return res.status(200).json({
 		message: `User is authenticated!`,
-	});}
+	});
+}
 
 // Generate JWT (Session)
 const generateToken = (email) => {
