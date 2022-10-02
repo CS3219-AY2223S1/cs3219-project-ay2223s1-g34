@@ -4,12 +4,6 @@ import { useEffect, useCallback } from "react";
 import io from "socket.io-client";
 import { URI_COLLAB_SVC } from "../configs";
 import { useNavigate, useLocation } from "react-router-dom";
-const styles = {
-	editor: {
-		height: 200,
-		fontSize: "3em",
-	},
-};
 
 function getEl(id) {
 	return document.getElementById(id);
@@ -22,7 +16,7 @@ export default function SessionPage() {
 
 	const handleSession = useCallback(async () => {
 		const sessionId = location.state.roomId;
-		const state = location.state;
+
 		socket = io(URI_COLLAB_SVC, {
 			withCredentials: true,
 			credentials: "include",
@@ -30,14 +24,41 @@ export default function SessionPage() {
 		});
 
 		const editor = getEl("editor");
+		const chatfield = getEl("chatfield");
+		const chatbox = getEl("chatbox");
 		editor.addEventListener("keyup", (evt) => {
 			const text = editor.value;
 			socket.emit("editor", { content: text, to: sessionId });
 		});
+		chatfield.addEventListener("keypress", (evt) => {
+			evt.preventDefault();
+			if (evt.key === "Enter" && chatfield.value) {
+				chatbox.value += "Me: " + chatfield.value + "\n";
+				chatbox.scrollTo(0, chatbox.scrollHeight);
+				socket.emit("chat", {
+					message: chatfield.value,
+					to: sessionId,
+				});
+				chatfield.value = "";
+			} else if (evt.key !== "Enter") {
+				chatfield.value += evt.key;
+			}
+		});
 		socket.on("editor", (data) => {
 			editor.value = data;
 		});
+
+		socket.on("chat", (data) => {
+			chatbox.value += "Partner: " + data + "\n";
+			chatbox.scrollTo(0, chatbox.scrollHeight);
+		});
 	}, [location, navigate]);
+
+	function sessionClose() {
+		const state = location.state;
+		socket.close();
+		navigate("/home", { state });
+	}
 
 	function sessionClose() {
 		const state = location.state;
@@ -74,35 +95,16 @@ export default function SessionPage() {
 					padding="0.25em"
 					margin="0.25em"
 					sx={{ border: 1 }}
-					id="chatbox"
 				>
-					<Paper
-						variant="outlined"
-						elevation={0}
-						sx={{
-							fontSize: "0.3em",
-							fontFamily: "Lato",
-							padding: "0.3em",
-							margin: "0.3em",
-							textAlign: "left",
-						}}
-					>
-						User1: Other User Message!
-					</Paper>
-
-					<Paper
-						variant="outlined"
-						elevation={0}
-						sx={{
-							fontSize: "0.3em",
-							fontFamily: "Lato",
-							padding: "0.3em",
-							margin: "0.3em",
-							textAlign: "right",
-						}}
-					>
-						Your Message!
-					</Paper>
+					<TextField
+						id="chatbox"
+						multiline={true}
+						minRows={5}
+						maxRows={5}
+						InputProps={{ readOnly: true }}
+						placeholder="Chatbox here"
+						height="70%"
+					></TextField>
 				</Box>
 				<TextField
 					id="chatfield"
@@ -121,11 +123,11 @@ export default function SessionPage() {
 				backgroundColor="primary.main"
 				width="50%"
 				justifyContent="space-between"
-                alignItems="center"
+				alignItems="center"
 			>
 				<Box
 					height="100%"
-                    width="90%"
+					width="90%"
 					padding="0.25em"
 					margin="0.25em"
 					sx={{ border: 1, borderColor: "secondary.main" }}
@@ -153,11 +155,11 @@ export default function SessionPage() {
 					variant="outlined"
 					onClick={sessionClose}
 					sx={{
-                        margin:"1em",
+						margin: "1em",
 						fontFamily: "Poppins",
 						fontSize: "0.3em",
 						letterSpacing: "1.5px",
-                        width: "95%"
+						width: "95%",
 					}}
 				>
 					Finish
