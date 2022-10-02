@@ -99,18 +99,21 @@ export default function SessionPage() {
 					<TextField
 						id="chatbox"
 						multiline={true}
-						minRows={5}
-						maxRows={5}
-						InputProps={{ readOnly: true }}
+						minRows={20}
+						maxRows={20}
+						fullWidth
+						InputProps={{
+							readOnly: true,
+							style: { fontFamily: "Poppins", fontSize: "0.3em", height: "65vh"},
+						}}
 						placeholder="Chatbox here"
-						height="70%"
 					></TextField>
 				</Box>
 				<TextField
 					id="chatfield"
 					placeholder="Message"
 					InputProps={{
-						style: { fontFamily: "Poppins", fontSize: "0.3em" },
+						style: { fontFamily: "Poppins", fontSize: "0.3em"},
 					}}
 					sx={{
 						margin: "0.25em",
