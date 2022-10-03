@@ -56,7 +56,6 @@ function App() {
 							element={<VerifyEmailPage />}
 						/>
 
-
 						<Route
 							path="/home"
 							element={
@@ -76,8 +75,9 @@ function App() {
 						<Route
 							path="/session"
 							element={
-								<SessionPage />
-
+								<ProtectedRoute>
+									<SessionPage />
+								</ProtectedRoute>
 							}
 						/>
 					</Routes>

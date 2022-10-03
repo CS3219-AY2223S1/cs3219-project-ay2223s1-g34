@@ -60,12 +60,6 @@ export default function SessionPage() {
 		navigate("/home", { state });
 	}
 
-	function sessionClose() {
-		const state = location.state;
-		socket.close();
-		navigate("/home", { state });
-	}
-
 	useEffect(() => {
 		handleSession();
 	}, [handleSession]);
