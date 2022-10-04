@@ -221,7 +221,26 @@ function HomePage() {
 					>
 						PeerPrep
 					</Typography>
-					<Box color="primary">
+					<Box
+						color="primary"
+						display="flex"
+						flexDirection="row"
+					>
+						<Typography
+							sx={{
+								flexGrow: 1,
+								fontFamily: "Poppins",
+								fontSize: "0.3em",
+								textTransform: "capitalize",
+								padding: "0",
+								margin: "0",
+								marginTop: "0.5em",
+								marginRight: "0.5em",
+								verticalAlign: "middle",
+							}}
+						>
+							{location.state.username}
+						</Typography>
 						<IconButton
 							onClick={handleMenu}
 							color="secondary"
@@ -388,7 +407,7 @@ function HomePage() {
 				</DialogActions>
 			</Dialog>
 
-			<Matching email={location.state.email} />
+			<Matching email={location.state.email} username={location.state.username} />
 		</Box>
 	);
 }

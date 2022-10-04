@@ -25,7 +25,8 @@ function SignInPage() {
 			});
 
 		if (res && res.status === STATUS_CODE_SUCCESS) {
-			navigate("/home", { state: { email } });
+			const username = res.data.username
+			navigate("/home", { state: { email , username} });
 		}
 	};
 

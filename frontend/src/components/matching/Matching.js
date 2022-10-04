@@ -5,7 +5,7 @@ import { Box, Button, TextField, Typography, MenuItem } from "@mui/material";
 
 import { DIFFICULTY_LEVELS, TOPICS } from "../../constants";
 
-function Matching({ email }) {
+function Matching({ email , username }) {
     const [isInviteVisible, setIsInviteVisible] = useState("");
     // TODO add topics
 
@@ -31,7 +31,7 @@ function Matching({ email }) {
         }
 
         navigate("/waiting", {
-            state: { email, difficultyLevel, topic, emailToInvite },
+            state: { email, username, difficultyLevel, topic, emailToInvite },
         });
     };
 

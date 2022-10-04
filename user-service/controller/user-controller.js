@@ -54,6 +54,7 @@ export async function signIn(req, res) {
 				res.cookie("token", token, { httpOnly: true });
 				return res.status(200).json({
 					message: `Successfully signed in as ${resp}!`,
+					username: `${resp}`,
 					token: `${token}`,
 				});
 			} else {
