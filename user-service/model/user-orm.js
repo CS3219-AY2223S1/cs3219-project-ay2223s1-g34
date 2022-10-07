@@ -8,6 +8,7 @@ import {
 	logoutUser,
 	isEmailExist,
 	resetPassword,
+	verifyEmail,
 } from "./repository.js";
 
 //need to separate orm functions from repository to decouple business logic from persistence
@@ -52,7 +53,16 @@ export async function ormChangePassword(email, oldPassword, newPassword) {
 	}
 }
 
-export async function ormResetPassword(token, newPassword) {
+export async function ormVerifyEmail(token) {
+	try {
+		return verifyEmail(token);
+	} catch (err) {
+		console.log("ERROR: Email verify unsuccessful");
+		return { err };
+	}
+}
+
+export async function ormResetPassword(token) {
 	try {
 		return resetPassword(token, newPassword);
 	} catch (err) {
@@ -93,9 +103,8 @@ export async function ormForgotPassword(email) {
 		const resetUrl = `http://localhost:3000/resetpw/${resetToken}`;
 		const text = `Click the link to reset your password: ${resetUrl}`;
 		try {
-			// Put actual email address here to receive reset emails (as email addresses are not verified at creation)
 			await sendEmail({
-				email: process.env.TO_EMAIL,
+				email: email,
 				subject: "Password Reset",
 				text,
 			});
@@ -109,5 +118,22 @@ export async function ormForgotPassword(email) {
 		}
 	} else {
 		return false;
+	}
+}
+
+export async function ormSendVerifyEmail(email, token) {
+	// Create and send Email
+	const resetUrl = `http://localhost:3000/verify/${token}`;
+	const text = `Click the link to verify your email: ${resetUrl}`;
+	try {
+		await sendEmail({
+			email: email,
+			subject: "Email Verification",
+			text,
+		});
+		return true;
+	} catch (err) {
+		console.log(err);
+		return err;
 	}
 }

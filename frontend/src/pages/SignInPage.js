@@ -3,15 +3,17 @@ import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_SUCCESS } from "../constants";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , useLocation} from "react-router-dom";
 
 function SignInPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	const handleSignin = async () => {
+		location.state = { email : email}
 		const res = await axios
 			.post(
 				URL_USER_SVC + "/signin",
@@ -23,7 +25,8 @@ function SignInPage() {
 			});
 
 		if (res && res.status === STATUS_CODE_SUCCESS) {
-			navigate("/home", { state: { email } });
+			const username = res.data.username
+			navigate("/home", { state: { email , username} });
 		}
 	};
 

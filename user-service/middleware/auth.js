@@ -1,6 +1,12 @@
 import jwt from "jsonwebtoken";
 
 export const isAuth = async (req, res, next) => {
+	if (!req.params.email) {
+		console.log("Unauthorized action!");
+		return res
+			.status(401)
+			.json({ message: "Unauthorized action!" });
+	}
 	let token = req.cookies.token;
 	if (token) {
 		try {
@@ -21,7 +27,7 @@ export const isAuth = async (req, res, next) => {
 			return res.status(401).json({ message: "Unauthorized action!" });
 		}
 	} else {
-		console.log("'Missing authorization token!");
+		console.log("Missing authorization token!");
 		return res
 			.status(401)
 			.json({ message: "Missing authorization token!" });

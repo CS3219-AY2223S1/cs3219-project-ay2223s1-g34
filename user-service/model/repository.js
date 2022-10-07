@@ -4,6 +4,7 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
 //Set up mongoose connection
 let mongoDB =
@@ -72,6 +73,21 @@ export async function resetPassword(token, newPassword) {
 	}
 }
 
+// Verify Email
+export async function verifyEmail(token) {
+	const verifiedToken = jwt.verify(token, process.env.JWT_SECRET);
+	const account = await UserModel.findOne({
+		email: verifiedToken.email,
+	});
+	if (account) {
+		account.verified = true;
+		account.save();
+		return account;
+	} else {
+		return null;
+	}
+}
+
 // Check username / email already exists for create account
 export async function isExist(username, email) {
 	const usernameExist = await UserModel.findOne({ username: username });
@@ -89,9 +105,14 @@ export async function isValidSignIn(email, password) {
 	const account = await UserModel.findOne({ email: email });
 	// Email registered
 	if (account) {
-		// Check email and hashed password match
-		if (await bcrypt.compare(password, account.password)) {
-			return account.username;
+		// Check email verified
+		if (account.verified) {
+			// Check email and hashed password match
+			if (await bcrypt.compare(password, account.password)) {
+				return account.username;
+			} else {
+				return null;
+			}
 		} else {
 			return null;
 		}

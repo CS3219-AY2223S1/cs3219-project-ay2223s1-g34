@@ -22,6 +22,7 @@ export default function WaitingPage() {
 
     const handleMatching = useCallback(async () => {
         const email = location.state.email;
+        const username = location.state.username;
         const difficultyLevel = location.state.difficultyLevel;
         const topic = location.state.topic;
         const emailToInvite = location.state.emailToInvite;
@@ -70,7 +71,7 @@ export default function WaitingPage() {
                 .then((resp)=>{
                     question=resp.data.question.contents})
 
-                navigate("/session", { state: { roomId, question, email } });
+                navigate("/session", { state: { roomId, question, email, username } });
                 // TODO navigate back to matching if matching cancelled
             } else {
                 setIsRematchVisible(true);
