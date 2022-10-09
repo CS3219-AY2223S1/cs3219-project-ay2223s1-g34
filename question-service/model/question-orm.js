@@ -1,9 +1,9 @@
-import { getQuestion } from './repository.js';
+import { getQuestionRandom } from './repository.js';
 
-//need to separate orm functions from repository to decouple business logic from persistence
-export async function ormGetQuestion(difficulty, topic) {
+// Need to separate orm functions from repository to decouple business logic from persistence
+export async function ormGetQuestionRandom(difficulty, topic) {
     try {
-        const question = await getQuestion(difficulty, topic);
+        const question = await getQuestionRandom(difficulty, topic);
         if (question) { // If question exists, return its JSON
             return {
                 'QID': question.QID,
