@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { getQuestion as processQuestionRequest } from './controller/question-controller.js';
+import { getQuestionsByFilter as processQuestionsByFilterRequest } from './controller/question-controller.js';
 
 const app = express();
 app.use(express.urlencoded({ extended: true }))
@@ -11,6 +12,7 @@ app.options('*', cors())
 const router = express.Router()
 router.get('/', (_, res) => res.send('Hello World from question-service'))
 router.get('/getQuestion', processQuestionRequest)
+router.get('/getQuestionsByFilter', processQuestionsByFilterRequest)
 
 app.use('/api/question', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')

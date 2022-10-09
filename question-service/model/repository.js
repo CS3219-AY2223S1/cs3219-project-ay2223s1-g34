@@ -18,3 +18,17 @@ export async function getQuestionRandom(difficulty, topic) {
 export async function getQuestionSpecific(qid) {
   return await QuestionModel.findOne({ QID: qid });
 }
+
+export async function getQuestionsByFilter(qid, difficulty, topic) {
+  const filter = { QID: qid, difficulty: difficulty, topic: topic };
+  if (filter['QID'] == null) {
+    delete filter['QID']
+  }
+  if (filter['difficulty'] == null) {
+    delete filter['difficulty']
+  }
+  if (filter['topic'] == null) {
+    delete filter['topic']
+  }
+  return await QuestionModel.find(filter);
+}
