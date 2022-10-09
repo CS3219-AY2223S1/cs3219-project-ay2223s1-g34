@@ -14,3 +14,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 export async function getQuestionRandom(difficulty, topic) {
   return await QuestionModel.findOne({ difficulty: difficulty, topic: topic });
 }
+
+export async function getQuestionSpecific(qid) {
+  return await QuestionModel.findOne({ QID: qid });
+}
