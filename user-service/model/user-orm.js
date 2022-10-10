@@ -31,6 +31,7 @@ export async function ormCreateUser(username, email, password) {
 		}
 	} catch (err) {
 		console.log("ERROR: Could not create new user");
+		console.log(err);
 		return { err };
 	}
 }
@@ -40,6 +41,7 @@ export async function ormDeleteUser(email) {
 		return deleteUser(email);
 	} catch (err) {
 		console.log("ERROR: Delete account unsuccessful");
+		console.log(err);
 		return { err };
 	}
 }
@@ -49,6 +51,7 @@ export async function ormChangePassword(email, oldPassword, newPassword) {
 		return changePassword(email, oldPassword, newPassword);
 	} catch (err) {
 		console.log("ERROR: Change password unsuccessful");
+		console.log(err);
 		return { err };
 	}
 }
@@ -58,15 +61,17 @@ export async function ormVerifyEmail(token) {
 		return verifyEmail(token);
 	} catch (err) {
 		console.log("ERROR: Email verify unsuccessful");
+		console.log(err);
 		return { err };
 	}
 }
 
-export async function ormResetPassword(token) {
+export async function ormResetPassword(token, newPassword) {
 	try {
 		return resetPassword(token, newPassword);
 	} catch (err) {
 		console.log("ERROR: Reset password unsuccessful");
+		console.log(err);
 		return { err };
 	}
 }
@@ -77,6 +82,7 @@ export async function ormSignIn(email, password) {
 		return await isValidSignIn(email, password);
 	} catch (err) {
 		console.log("ERROR: Username or email address incorrect!");
+		console.log(err);
 		return { err };
 	}
 }
@@ -88,6 +94,7 @@ export async function ormLogoutUser(token) {
 		return true;
 	} catch (err) {
 		console.log("ERROR: User logout unsuccessful!");
+		console.log(err);
 		return { err };
 	}
 }
@@ -95,7 +102,7 @@ export async function ormLogoutUser(token) {
 export async function ormForgotPassword(email) {
 	// Check whether email exist
 	const user = await isEmailExist(email);
-	if (user) {
+	if (user && user.verified) {
 		const resetToken = user.getResetPasswordToken();
 		await user.save();
 
@@ -114,6 +121,7 @@ export async function ormForgotPassword(email) {
 			user.resetToken = undefined;
 			user.resetTokenExpiry = undefined;
 			await user.save();
+			console.log(err);
 			return err;
 		}
 	} else {

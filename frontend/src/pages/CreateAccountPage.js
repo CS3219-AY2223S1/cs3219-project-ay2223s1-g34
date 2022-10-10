@@ -55,10 +55,11 @@ function CreateAccountPage() {
 				});
 
 			if (res2 && res2.status === STATUS_CODE_SUCCESS) {
-				setLoadingOpen(false);
 				handleOpenAlert();
 			}
 		}
+
+		setLoadingOpen(false);
 	};
 
 	return (
