@@ -48,9 +48,10 @@ function ForgotPasswordPage() {
 			});
 
 		if (res && res.status === STATUS_CODE_SUCCESS) {
-			setLoadingOpen(false);
 			handleOpen();
 		}
+
+		setLoadingOpen(false);
 	};
 
 	return (
