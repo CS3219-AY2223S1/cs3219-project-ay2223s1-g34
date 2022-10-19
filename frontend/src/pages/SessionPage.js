@@ -89,7 +89,7 @@ export default function SessionPage() {
 					</Typography>
 				</Toolbar>
 			</AppBar>
-			<Toolbar/>
+			<Toolbar />
 			<Box display="flex" flexDirection="row" height="100%">
 				<Box
 					display="flex"
@@ -98,36 +98,53 @@ export default function SessionPage() {
 					height="100%"
 					justifyContent="space-between"
 				>
-					<Box margin="0.25em">
+					<Box
+						margin="0.25em"
+						padding="0.2em"
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							overflow: "hidden",
+							overflowY: "scroll",
+							border: 1,
+							borderRadius: 1,
+							height: "28vh",
+						}}
+					>
 						<Typography fontSize="0.35em" fontFamily="Lato">
 							Difficulty:
 						</Typography>
 						<Typography fontSize="0.35em" fontFamily="Lato">
 							Topic:
 						</Typography>
-						<Typography fontSize="0.35em" fontFamily="Lato">
+						<Typography
+							fontSize="0.35em"
+							fontFamily="Lato"
+							style={{ wordWrap: "break-word" }}
+						>
 							Question: {location.state.question}
 						</Typography>
 					</Box>
 					<Box
-						height="100%"
 						padding="0.25em"
 						margin="0.25em"
-						sx={{ border: 1}}
+						sx={{
+							border: 1, borderRadius: 1,
+						}}
 					>
 						<TextField
 							id="chatbox"
 							multiline={true}
-							minRows={15}
-							maxRows={15}
-							margin="0.2em"
+							minRows={10}
+							maxRows={10}
+							margin="0.1em"
 							fullWidth
 							InputProps={{
 								readOnly: true,
 								style: {
 									fontFamily: "Poppins",
 									fontSize: "0.3em",
-									height: "50vh",
+									height: "35vh",
 								},
 							}}
 							placeholder="Chatbox here"
@@ -153,11 +170,19 @@ export default function SessionPage() {
 					alignItems="center"
 				>
 					<Box
-						height="100%"
+						height="70vh"
 						width="90%"
 						padding="0.25em"
 						margin="0.25em"
-						sx={{ border: 1, borderColor: "secondary.main" }}
+						sx={{
+							border: 1,
+							borderRadius: 1,
+							borderColor: "secondary.main",
+							display: "flex",
+							flexDirection: "column",
+							overflow: "hidden",
+							overflowY: "scroll",
+						}}
 						id="chatbox"
 					>
 						<TextField
