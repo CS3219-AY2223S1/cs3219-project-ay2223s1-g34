@@ -115,7 +115,7 @@ export async function ormForgotPassword(email) {
 				subject: "Password Reset",
 				text,
 			});
-			return true;
+			return resetToken;
 		} catch (err) {
 			console.log(err);
 			user.resetToken = undefined;
@@ -125,7 +125,7 @@ export async function ormForgotPassword(email) {
 			return err;
 		}
 	} else {
-		return false;
+		return null;
 	}
 }
 

@@ -75,15 +75,20 @@ export async function resetPassword(token, newPassword) {
 
 // Verify Email
 export async function verifyEmail(token) {
-	const verifiedToken = jwt.verify(token, process.env.JWT_SECRET);
-	const account = await UserModel.findOne({
-		email: verifiedToken.email,
-	});
-	if (account) {
-		account.verified = true;
-		account.save();
-		return account;
-	} else {
+	try {
+		const verifiedToken = jwt.verify(token, process.env.JWT_SECRET);
+		const account = await UserModel.findOne({
+			email: verifiedToken.email,
+		});
+		if (account) {
+			account.verified = true;
+			account.save();
+			return account;
+		} else {
+			return null;
+		}
+	} catch (error) {
+		console.log(error);
 		return null;
 	}
 }

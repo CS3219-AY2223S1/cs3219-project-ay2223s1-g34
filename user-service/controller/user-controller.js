@@ -242,6 +242,7 @@ export async function forgotPassword(req, res) {
 			console.log(`Password reset email sent!`);
 			return res.status(200).json({
 				message: `Password reset email sent!`,
+				token: resp
 			});
 		} else {
 			console.log(`Password reset email failed to sent!`);
