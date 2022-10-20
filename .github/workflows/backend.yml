@@ -21,5 +21,6 @@ jobs:
         node-version: "14.x"
         cache: 'npm'
         cache-dependency-path: './user-service/package-lock.json'
+    - run: cd user-service
     - run: npm install
     - run: npm run test
