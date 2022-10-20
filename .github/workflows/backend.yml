@@ -30,7 +30,8 @@ jobs:
       uses: supercharge/mongodb-github-action@1.2.0
       with:
         mongodb-version: ${{ matrix.mongodb-version }}
-    - env:
-      MONGO_URL: mongodb+srv://admin:admin123@cluster0.esazx24.mongodb.net/cs3219-project-user-service?retryWrites=true&w=majority
+
     - run: npm install
     - run: npm run test
+      env:
+        MONGO_URL: mongodb+srv://admin:admin123@cluster0.esazx24.mongodb.net/cs3219-project-user-service?retryWrites=true&w=majority
