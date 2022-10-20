@@ -12,9 +12,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        mongodb-version: [4.0, 4.2]
+    services:
+      mongodb:
+        image: mongo
+        env:
+          DB_CLOUD_URI: mongodb+srv://admin:admin123@cluster0.esazx24.mongodb.net/cs3219-project-user-service?retryWrites=true&w=majority
     defaults:
       run:
         working-directory: ./user-service
@@ -34,7 +36,6 @@ jobs:
     - run: npm install
     - run: npm run test
       env:
-        DB_CLOUD_URI: mongodb+srv://admin:admin123@cluster0.esazx24.mongodb.net/cs3219-project-user-service?retryWrites=true&w=majority
         JWT_SECRET: threedoorcabinet
         FROM_NAME: PeerPrep
         FROM_EMAIL: threedoorcabinet@gmail.com
