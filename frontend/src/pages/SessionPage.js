@@ -7,10 +7,11 @@ import {
 	AppBar,
 } from "@mui/material";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import io from "socket.io-client";
 import { URI_COLLAB_SVC } from "../configs";
 import { useNavigate, useLocation } from "react-router-dom";
+import MonacoEditor from "react-monaco-editor";
 
 function getEl(id) {
 	return document.getElementById(id);
@@ -18,25 +19,38 @@ function getEl(id) {
 
 export default function SessionPage() {
 	let socket;
+	let editor;
 	const location = useLocation();
 	const navigate = useNavigate();
+	const sessionId = location.state.roomId;
+	const [editorText, setEditorText] = useState();
 
+	socket = io(URI_COLLAB_SVC, {
+		withCredentials: true,
+		credentials: "include",
+		query: { id: sessionId },
+	});
+
+	const onMount = (input) => {
+		editor = input;
+		setEditorText("Enter your code here!")
+	};
+
+	const handleEditorChange = (text) => {
+		setEditorText(text);
+		console.log(editorText);
+	};
 	const handleSession = useCallback(async () => {
-		const sessionId = location.state.roomId;
-
-		socket = io(URI_COLLAB_SVC, {
-			withCredentials: true,
-			credentials: "include",
-			query: { id: sessionId },
-		});
-
-		const editor = getEl("editor");
 		const chatfield = getEl("chatfield");
 		const chatbox = getEl("chatbox");
-		editor.addEventListener("keyup", (evt) => {
-			const text = editor.value;
-			socket.emit("editor", { content: text, to: sessionId });
+
+		editor.onKeyUp(() => {
+			socket.emit("editor", {
+				content: editor.getValue(),
+				to: sessionId,
+			});
 		});
+
 		chatfield.addEventListener("keypress", (evt) => {
 			evt.preventDefault();
 			if (evt.key === "Enter" && chatfield.value) {
@@ -51,8 +65,9 @@ export default function SessionPage() {
 				chatfield.value += evt.key;
 			}
 		});
+
 		socket.on("editor", (data) => {
-			editor.value = data;
+			handleEditorChange(data);
 		});
 
 		socket.on("chat", (data) => {
@@ -129,7 +144,8 @@ export default function SessionPage() {
 						padding="0.25em"
 						margin="0.25em"
 						sx={{
-							border: 1, borderRadius: 1,
+							border: 1,
+							borderRadius: 1,
 						}}
 					>
 						<TextField
@@ -185,21 +201,19 @@ export default function SessionPage() {
 						}}
 						id="chatbox"
 					>
-						<TextField
-							fullWidth
-							id="editor"
-							variant="standard"
-							placeholder="Enter your code here"
-							InputProps={{
-								disableUnderline: true,
-								style: {
-									fontFamily: "Poppins",
-									fontSize: "0.3em",
-									color: "#FFFFFF",
+						<MonacoEditor
+							options={{
+								automaticLayout: true,
+								minimap: {
+									enabled: false,
 								},
 							}}
-							multiline={true}
-						></TextField>
+							id="editor"
+							theme="vs-dark"
+							value={editorText}
+							editorDidMount={onMount}
+							onChange={handleEditorChange}
+						/>
 					</Box>
 					<Button
 						id="finish-button"
