@@ -9,7 +9,7 @@ chai.should(); // Assertion style
 
 // Creat Account
 describe("POST", function () {
-	this.timeout(5000);
+	this.timeout(50000);
 	it("[Invalid Input] Create Account - Username too short", function (done) {
 		chai.request(app)
 			.post("/api/user/createacc")
@@ -137,7 +137,7 @@ describe("POST", function () {
 // Verify Email
 describe("POST", function () {
 	let token = null;
-	this.timeout(5000);
+	this.timeout(50000);
 	it("[Valid Input] Send Verify Email", function (done) {
 		chai.request(app)
 			.post("/api/user/sendverify/threedoorcabinet@gmail.com")
@@ -188,7 +188,7 @@ describe("POST", function () {
 // Sign In
 describe("POST", function () {
 	let token = null;
-	this.timeout(5000);
+	this.timeout(50000);
 	it("[Valid Input] Sign In", function (done) {
 		chai.request(app)
 			.post("/api/user/signin")
@@ -365,7 +365,7 @@ describe("POST", function () {
 // Reset Password
 describe("POST", function () {
 	let token = null;
-	this.timeout(5000);
+	this.timeout(50000);
 	it("[Valid Input] Forgot Password", function (done) {
 		chai.request(app)
 			.post("/api/user/forgotpw/threedoorcabinet@gmail.com")
@@ -437,7 +437,7 @@ describe("POST", function () {
 // Delete Account
 describe("POST", function () {
 	let token = null;
-	this.timeout(5000);
+	this.timeout(50000);
 	it("[Valid Input] Sign In", function (done) {
 		chai.request(app)
 			.post("/api/user/signin")
