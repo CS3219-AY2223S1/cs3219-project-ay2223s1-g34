@@ -34,4 +34,8 @@ jobs:
     - run: npm install
     - run: npm run test
       env:
-        MONGO_URL: mongodb+srv://admin:admin123@cluster0.esazx24.mongodb.net/cs3219-project-user-service?retryWrites=true&w=majority
+        DB_CLOUD_URI: mongodb+srv://admin:admin123@cluster0.esazx24.mongodb.net/cs3219-project-user-service?retryWrites=true&w=majority
+        JWT_SECRET: threedoorcabinet
+        FROM_NAME: PeerPrep
+        FROM_EMAIL: threedoorcabinet@gmail.com
+        FROM_EMAIL_PW: ivxlghliklnbmhta
