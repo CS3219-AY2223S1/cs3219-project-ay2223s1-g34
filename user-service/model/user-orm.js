@@ -25,7 +25,7 @@ export async function ormCreateUser(username, email, password) {
 				await newUser.save();
 				return true;
 			} catch (err) {
-				console.log("ERROR: Invalid email address");
+				console.log("ERROR: Invalid credentials");
 				return { err };
 			}
 		}

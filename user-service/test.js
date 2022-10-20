@@ -10,6 +10,37 @@ chai.should(); // Assertion style
 // Creat Account
 describe("POST", function () {
 	this.timeout(5000);
+	it("[Invalid Input] Create Account - Username too short", function (done) {
+		chai.request(app)
+			.post("/api/user/createacc")
+			.send({
+				username: "a",
+				email: "threedoorcabinet@gmail.com",
+				password: "password123",
+			})
+			.end((error, result) => {
+				result.should.have.status(400);
+				result.body.should.have.property("message");
+				result.body.message.should.equal("Invalid credentials!");
+				done();
+			});
+	});
+	it("[Invalid Input] Create Account - Username too long", function (done) {
+		chai.request(app)
+			.post("/api/user/createacc")
+			.send({
+				username:
+					"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				email: "threedoorcabinet@gmail.com",
+				password: "password123",
+			})
+			.end((error, result) => {
+				result.should.have.status(400);
+				result.body.should.have.property("message");
+				result.body.message.should.equal("Invalid credentials!");
+				done();
+			});
+	});
 	it("[Valid Input] Create Account", function (done) {
 		chai.request(app)
 			.post("/api/user/createacc")
@@ -97,7 +128,7 @@ describe("POST", function () {
 			.end((error, result) => {
 				result.should.have.status(400);
 				result.body.should.have.property("message");
-				result.body.message.should.equal("Invalid email");
+				result.body.message.should.equal("Invalid credentials!");
 				done();
 			});
 	});

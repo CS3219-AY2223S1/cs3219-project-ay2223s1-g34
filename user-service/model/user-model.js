@@ -16,6 +16,8 @@ let UserModelSchema = new Schema({
 		type: String,
 		required: true,
 		unique: true,
+		minlength:6,
+		maxlength:18
 	},
 	email: {
 		type: String,
@@ -32,6 +34,8 @@ let UserModelSchema = new Schema({
 	password: {
 		type: String,
 		required: true,
+		minlength:8,
+		maxlength:256,
 	},
 	resetToken: {
 		type: String,

@@ -16,7 +16,7 @@ export async function createUser(req, res) {
 		if (username && email && password) {
 			const resp = await _createUser(username, email, password);
 			if (resp.err) {
-				return res.status(400).json({ message: "Invalid email" });
+				return res.status(400).json({ message: "Invalid credentials!" });
 			}
 			if (resp) {
 				console.log(`Created new user ${username} successfully!`);
