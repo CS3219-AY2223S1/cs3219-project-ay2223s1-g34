@@ -1,17 +1,29 @@
-import express from 'express';
-import cors from 'cors';
-import { createServer } from 'http';
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import { createServer } from "http";
+
+import router from "./routes/routes.js";
+import { initIo } from "./socket.js";
+
+const PORT = process.env.PORT || 8001;
 
 const app = express();
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
-app.use(cors()) // config cors so that front-end can use
-app.options('*', cors())
 
-app.get('/', (req, res) => {
-    res.send('Hello World from matching-service');
+// start routes
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cors({ origin: true, credentials: true })); // config cors so that front-end can use
+app.options("*", cors());
+
+app.use("/api/matching", router);
+
+const httpServer = createServer(app);
+
+// listen to io
+initIo(httpServer);
+
+// start server
+httpServer.listen(PORT, async () => {
+    console.log("matching-service listening on port " + PORT);
 });
-
-const httpServer = createServer(app)
-
-httpServer.listen(8001);
