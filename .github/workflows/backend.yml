@@ -10,6 +10,7 @@ on:
     branches: [ "user-service" ]
 
 env:
+  ENV: PROD
   DB_CLOUD_URI: mongodb+srv://admin:admin123@cluster0.esazx24.mongodb.net/cs3219-project-user-service?retryWrites=true&w=majority
   JWT_SECRET: threedoorcabinet
   FROM_NAME: PeerPrep
