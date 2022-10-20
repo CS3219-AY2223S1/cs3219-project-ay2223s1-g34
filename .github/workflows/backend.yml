@@ -11,11 +11,11 @@ on:
 
 env:
   ENV: PROD
-  DB_CLOUD_URI: mongodb+srv://admin:admin123@cluster0.esazx24.mongodb.net/cs3219-project-user-service?retryWrites=true&w=majority
-  JWT_SECRET: threedoorcabinet
-  FROM_NAME: PeerPrep
-  FROM_EMAIL: threedoorcabinet@gmail.com
-  FROM_EMAIL_PW: ivxlghliklnbmhta
+  DB_CLOUD_URI: ${{ secrets.DB_CLOUD_URI }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET}}
+  FROM_NAME: ${{ secrets.FROM_NAME}}
+  FROM_EMAIL: ${{ secrets.FROM_EMAIL}}
+  FROM_EMAIL_PW: ${{ secrets.FROM_EMAIL_PW}}
 
 jobs:
   build:
