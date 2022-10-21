@@ -5,9 +5,9 @@ name: Backend CI
 
 on:
   push:
-    branches: [ "user-service" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "user-service" ]
+    branches: [ "main" ]
 
 env:
   ENV: PROD
