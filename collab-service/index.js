@@ -42,7 +42,11 @@ io.on("connection", (socket) => {
         socket.to(to).emit("editor", content);
     });
     socket.on("chat", ({ message, to }) => {
-        in_mem_storage_chat.set(to, message)
+        if (in_mem_storage_chat.get(to)) {
+            in_mem_storage_chat.set(to, in_mem_storage_chat.get(id) + "\n"+ message)
+        } else {
+            in_mem_storage_chat.set(to, message)
+        }
         socket.to(to).emit("chat", message);
     });
     socket.on("exit", ({to}) => {
