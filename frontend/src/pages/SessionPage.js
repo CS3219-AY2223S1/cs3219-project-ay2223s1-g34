@@ -20,6 +20,8 @@ export default function SessionPage() {
     let socket;
     const location = useLocation();
     const navigate = useNavigate();
+    const username = location.state.username;
+    const topic = location.state.topic;
 
     const handleSession = useCallback(async () => {
         const sessionId = location.state.roomId;
@@ -51,9 +53,9 @@ export default function SessionPage() {
         chatfield.addEventListener("keypress", (evt) => {
             evt.preventDefault();
             if (evt.key === "Enter" && chatfield.value) {
-                updateChatbox("Me: " + chatfield.value);
+                updateChatbox(username+ ": " + chatfield.value);
                 socket.emit("chat", {
-                    message: chatfield.value,
+                    message: username+ ": " + chatfield.value,
                     to: sessionId,
                 });
                 chatfield.value = "";
@@ -66,8 +68,7 @@ export default function SessionPage() {
             editor.value = data;
         });
 
-        socket.on("chat", (data) => updateChatbox("=> Partner: " + data));
-
+        socket.on("chat", (data) => updateChatbox(data));
         socket.on("exit", () => updateChatbox("Partner left session"));
     }, [location, navigate]);
 
@@ -113,10 +114,10 @@ export default function SessionPage() {
                 >
                     <Box margin="0.25em">
                         <Typography fontSize="0.35em" fontFamily="Lato">
-                            Difficulty:
+                            Difficulty: {location.state.difficultyLevel}
                         </Typography>
                         <Typography fontSize="0.35em" fontFamily="Lato">
-                            Topic:
+                            Topic: {location.state.topic}
                         </Typography>
                         <Typography fontSize="0.35em" fontFamily="Lato">
                             Question: {location.state.question}

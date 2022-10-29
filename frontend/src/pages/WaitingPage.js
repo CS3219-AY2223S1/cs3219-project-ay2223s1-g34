@@ -90,6 +90,11 @@ export default function WaitingPage() {
                     state: {
                         roomId,
                         question,
+                        difficultyLevel: DIFFICULTY_LEVELS.find(
+                            (item) => item.value === difficultyLevel
+                        ).label,
+                        topic: TOPICS.find((item) => item.value === topic)
+                        .label,
                         email,
                         username,
                         isInviteMatched,
