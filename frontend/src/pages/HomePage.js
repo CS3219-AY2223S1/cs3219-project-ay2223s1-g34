@@ -61,21 +61,32 @@ function HomePage() {
 		setChangePasswordSuccess(false);
 	};
 
-	const handleChangePasswordConfirm = async () => {
-		const res = await axios
-			.put(
-				URL_USER_SVC + "/changepw" + "/" + location.state.email,
-				{ old: oldPassword, new: newPassword },
-				{ withCredentials: true, credentials: "include" }
-			)
-			.catch((err) => {
-				console.log(err);
-				setChangePwError(err.response.data.message);
-			});
+	const validateFields = () => {
+		// Check password length
+		if (newPassword.length < 8) {
+			setChangePwError("Password has to be at least 8 characters long!");
+			return false;
+		}
+		return true;
+	};
 
-		if (res && res.status === STATUS_CODE_SUCCESS) {
-			handleOpenChangePasswordSuccess();
-			handleChangePasswordCancel();
+	const handleChangePasswordConfirm = async () => {
+		if (validateFields()) {
+			const res = await axios
+				.put(
+					URL_USER_SVC + "/changepw" + "/" + location.state.email,
+					{ old: oldPassword, new: newPassword },
+					{ withCredentials: true, credentials: "include" }
+				)
+				.catch((err) => {
+					console.log(err);
+					setChangePwError(err.response.data.message);
+				});
+
+			if (res && res.status === STATUS_CODE_SUCCESS) {
+				handleOpenChangePasswordSuccess();
+				handleChangePasswordCancel();
+			}
 		}
 	};
 
@@ -221,17 +232,12 @@ function HomePage() {
 					>
 						PeerPrep
 					</Typography>
-					<Box
-						color="primary"
-						display="flex"
-						flexDirection="row"
-					>
+					<Box color="primary" display="flex" flexDirection="row">
 						<Typography
 							sx={{
 								flexGrow: 1,
 								fontFamily: "Poppins",
 								fontSize: "0.3em",
-								textTransform: "capitalize",
 								padding: "0",
 								margin: "0",
 								marginTop: "0.5em",
@@ -407,7 +413,10 @@ function HomePage() {
 				</DialogActions>
 			</Dialog>
 
-			<Matching email={location.state.email} username={location.state.username} />
+			<Matching
+				email={location.state.email}
+				username={location.state.username}
+			/>
 		</Box>
 	);
 }

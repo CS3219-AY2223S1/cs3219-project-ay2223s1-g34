@@ -16,7 +16,7 @@ export async function createUser(req, res) {
 		if (username && email && password) {
 			const resp = await _createUser(username, email, password);
 			if (resp.err) {
-				return res.status(400).json({ message: "Invalid email" });
+				return res.status(400).json({ message: "Invalid credentials!" });
 			}
 			if (resp) {
 				console.log(`Created new user ${username} successfully!`);
@@ -235,18 +235,16 @@ export async function logout(req, res) {
 export async function forgotPassword(req, res) {
 	try {
 		const resp = await _forgotPassword(req.params.email);
-		if (resp.err) {
-			return res.status(400).json({ message: "Invalid email" });
-		}
 		if (resp) {
 			console.log(`Password reset email sent!`);
 			return res.status(200).json({
 				message: `Password reset email sent!`,
+				token: resp
 			});
 		} else {
-			console.log(`Password reset email failed to sent!`);
-			return res.status(500).json({
-				message: "Password reset email failed to sent!",
+			console.log(`Invalid email!`);
+			return res.status(400).json({
+				message: "Invalid email!",
 			});
 		}
 	} catch (err) {
