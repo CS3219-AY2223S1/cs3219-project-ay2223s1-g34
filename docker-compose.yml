@@ -10,13 +10,6 @@ services:
     
   user-service:
     build:
-      args:
-        ENV: ${ENV}
-        DB_CLOUD_URI: ${DB_CLOUD_URI}
-        JWT_SECRET: ${JWT_SECRET}
-        FROM_NAME: ${FROM_NAME}
-        FROM_EMAIL: ${FROM_EMAIL}
-        FROM_EMAIL_PW: ${FROM_EMAIL_PW}
       context: user-service
       dockerfile: DOCKERFILE
     ports:
