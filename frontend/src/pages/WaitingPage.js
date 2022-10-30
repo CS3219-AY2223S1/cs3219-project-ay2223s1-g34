@@ -68,7 +68,7 @@ export default function WaitingPage() {
                 var question;
 
                 await axios
-                    .get(
+                    .post(
                         URL_QUESTION_SVC + "/getQuestion",
                         {
                             difficulty: DIFFICULTY_LEVELS.find(

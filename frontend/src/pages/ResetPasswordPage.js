@@ -31,21 +31,32 @@ function ResetPasswordPage() {
 		navigate("/signin");
 	};
 
+	const validateFields = () => {
+		// Check password length
+		if (password.length < 8) {
+			setErrorMessage("Password has to be at least 8 characters long!");
+			return false;
+		}
+		return true;
+	};
+
 	const handleResetPassword = async () => {
-		const res = await axios
-			.put(
-				URL_USER_SVC +
-					"/resetpw" +
-					"/" +
-					location.pathname.split("/")[2],
-				{ new: password }
-			)
-			.catch((err) => {
-				console.log(err);
-				setErrorMessage(err.response.data.message);
-			});
-		if (res && res.status === STATUS_CODE_SUCCESS) {
-			handleOpen();
+		if (validateFields()) {
+			const res = await axios
+				.put(
+					URL_USER_SVC +
+						"/resetpw" +
+						"/" +
+						location.pathname.split("/")[2],
+					{ new: password }
+				)
+				.catch((err) => {
+					console.log(err);
+					setErrorMessage(err.response.data.message);
+				});
+			if (res && res.status === STATUS_CODE_SUCCESS) {
+				handleOpen();
+			}
 		}
 	};
 

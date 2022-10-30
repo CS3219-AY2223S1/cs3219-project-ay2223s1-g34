@@ -11,8 +11,8 @@ app.options('*', cors())
 
 const router = express.Router()
 router.get('/', (_, res) => res.send('Hello World from question-service'))
-router.get('/getQuestion', processQuestionRequest)
-router.get('/getQuestionsByFilter', processQuestionsByFilterRequest)
+router.post('/getQuestion', processQuestionRequest)
+router.post('/getQuestionsByFilter', processQuestionsByFilterRequest)
 
 app.use('/api/question', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')
