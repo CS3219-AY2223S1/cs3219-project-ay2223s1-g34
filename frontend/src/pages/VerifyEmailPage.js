@@ -122,7 +122,7 @@ function VerifyEmailPage() {
 					marginTop="1em"
 					width="60%"
 				>
-					Some text or image about PeerPrep
+					Solve coding questions together
 				</Typography>
 			</Box>
 

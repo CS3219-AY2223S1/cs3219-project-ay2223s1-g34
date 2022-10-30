@@ -12,9 +12,10 @@ let mongoDB =
 		? process.env.DB_CLOUD_URI
 		: process.env.DB_LOCAL_URI;
 
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+const con = await mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 let db = mongoose.connection;
+console.log(`MongoDB Connected: ${con.connection.host}`)
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 // Create new account

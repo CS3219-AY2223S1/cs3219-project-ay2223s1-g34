@@ -249,7 +249,7 @@ function CreateAccountPage() {
 					align="center"
 					marginTop="1em"
 				>
-					Some text or image about PeerPrep
+					Solve coding questions together
 				</Typography>
 			</Box>
 
