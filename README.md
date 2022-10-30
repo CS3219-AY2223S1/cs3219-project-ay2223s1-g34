@@ -1,5 +1,11 @@
 # Group 34 PeerPrep Project
 ![](./Sign-in.png)
+
+## Docker
+Use this to start up all the services. 
+1. Run `docker compose up` in the project directory 
+
+The following instructions are for running the individual services locally i.e not in a docker container.
 ## User Service
 1. Rename `sample-env.txt` file to `.env`.
 2. Create a Cloud DB URL using Mongo Atlas.
@@ -35,3 +41,4 @@
 ## Frontend
 1. Install npm packages using `npm i`.
 2. Run Frontend using `npm start`.
+

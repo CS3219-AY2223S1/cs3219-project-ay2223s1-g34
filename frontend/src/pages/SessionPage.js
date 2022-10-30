@@ -1,10 +1,10 @@
 import {
-	Box,
-	Button,
-	TextField,
-	Typography,
-	Toolbar,
-	AppBar,
+    Box,
+    Button,
+    TextField,
+    Typography,
+    Toolbar,
+    AppBar,
 } from "@mui/material";
 
 import { useEffect, useCallback, useState } from "react";
@@ -14,7 +14,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import MonacoEditor from "react-monaco-editor";
 
 function getEl(id) {
-	return document.getElementById(id);
+    return document.getElementById(id);
 }
 
 export default function SessionPage() {
@@ -22,14 +22,16 @@ export default function SessionPage() {
 	let editor;
 	const location = useLocation();
 	const navigate = useNavigate();
+	const username = location.state.username;
+    const topic = location.state.topic;
 	const sessionId = location.state.roomId;
 	const [editorText, setEditorText] = useState();
 
-	socket = io(URI_COLLAB_SVC, {
-		withCredentials: true,
-		credentials: "include",
-		query: { id: sessionId },
-	});
+		socket = io(URI_COLLAB_SVC, {
+			withCredentials: true,
+			credentials: "include",
+			query: { id: sessionId },
+		});
 
 	const onMount = (input) => {
 		editor = input;
@@ -43,6 +45,15 @@ export default function SessionPage() {
 	const handleSession = useCallback(async () => {
 		const chatfield = getEl("chatfield");
 		const chatbox = getEl("chatbox");
+
+		const updateChatbox = (text) => {
+            chatbox.value += text + "\n";
+            chatbox.scrollTo(0, chatbox.scrollHeight);
+        };
+
+        if (location.state.isInviteMatched) {
+            updateChatbox("Successful matching via invitation");
+        }
 
 		editor.onKeyUp(() => {
 			socket.emit("editor", {
@@ -70,21 +81,22 @@ export default function SessionPage() {
 			handleEditorChange(data);
 		});
 
-		socket.on("chat", (data) => {
-			chatbox.value += "=> Partner: " + data + "\n";
-			chatbox.scrollTo(0, chatbox.scrollHeight);
-		});
-	}, [location, navigate]);
+        socket.on("chat", (data) => updateChatbox(data));
+        socket.on("exit", () => updateChatbox("Partner left session"));
+    }, [location, navigate]);
 
-	function sessionClose() {
-		const state = location.state;
-		socket.close();
-		navigate("/home", { state });
-	}
+    function sessionClose() {
+        const sessionId = location.state.roomId;
+        socket.emit("exit", { to: sessionId });
+        socket.close();
 
-	useEffect(() => {
-		handleSession();
-	}, [handleSession]);
+        const state = location.state;
+        navigate("/home", { state });
+    }
+
+    useEffect(() => {
+        handleSession();
+    }, [handleSession]);
 
 	return (
 		<Box display="flex" flexDirection="column" height="100vh">
@@ -126,12 +138,12 @@ export default function SessionPage() {
 							height: "28vh",
 						}}
 					>
-						<Typography fontSize="0.35em" fontFamily="Lato">
-							Difficulty:
-						</Typography>
-						<Typography fontSize="0.35em" fontFamily="Lato">
-							Topic:
-						</Typography>
+                        <Typography fontSize="0.35em" fontFamily="Lato">
+                            Difficulty: {location.state.difficultyLevel}
+                        </Typography>
+                        <Typography fontSize="0.35em" fontFamily="Lato">
+                            Topic: {location.state.topic}
+                        </Typography>
 						<Typography
 							fontSize="0.35em"
 							fontFamily="Lato"
