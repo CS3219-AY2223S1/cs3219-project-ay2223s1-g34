@@ -7,11 +7,12 @@ COPY . ./
 
 EXPOSE 8000
 
-ENV ENV=${ENV}
-ENV DB_CLOUD_URI=${DB_CLOUD_URI}
-ENV JWT_SECRET=${JWT_SECRET}
-ENV FROM_NAME=${FROM_NAME}
-ENV FROM_EMAIL=${FROM_EMAIL}
-ENV FROM_EMAIL_PW=${FROM_EMAIL_PW}
+ENV ENV=PROD
+ENV DB_CLOUD_URI=mongodb+srv://admin:admin123@cluster0.esazx24.mongodb.net/cs3219-project-user-service?retryWrites=true&w=majority
+ENV JWT_SECRET=threedoorcabinet
+ENV FROM_NAME=PeerPrep
+ENV FROM_EMAIL=threedoorcabinet@gmail.com
+ENV FROM_EMAIL_PW=ivxlghliklnbmhta
+ENV TO_EMAIL=hogantan98@gmail.com
 RUN npm test
 CMD [ "npm", "start" ]
