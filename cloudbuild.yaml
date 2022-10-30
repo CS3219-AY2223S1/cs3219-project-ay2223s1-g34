@@ -2,9 +2,9 @@
   - name: 'docker/compose:1.26.2'
     env:
       - 'ENV=${_ENV}'
-      - 'DB_CLOUD_URI=${_DB_CLOUD_URI}'
-      - 'JWT_SECRET=${_JWT_SECRET}'
-      - 'FROM_NAME=${_FROM_NAME}'
-      - 'FROM_EMAIL=${_FROM_EMAIL}'
-      - 'FROM_EMAIL_PW=${_FROM_EMAIL_PW}'
+      - 'DB_CLOUD_URI=$_DB_CLOUD_URI'
+      - 'JWT_SECRET=$_JWT_SECRET'
+      - 'FROM_NAME=$_FROM_NAME'
+      - 'FROM_EMAIL=$_FROM_EMAIL'
+      - 'FROM_EMAIL_PW=$_FROM_EMAIL_PW'
     args: ['up', '-d']
