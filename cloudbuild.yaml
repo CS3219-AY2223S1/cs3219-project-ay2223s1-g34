@@ -2,9 +2,6 @@
   - name: 'docker/compose:1.26.2'
     args: ['up', '-d']
 
-  - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/cloudrun/placeholder@sha256:45ec0903b0fe39eb9e4a1cca42f1719e4fe3fda2d5a0f49cc355d453a60f1ff5"]
-    # Deploy container image to Cloud Run
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
     args:
