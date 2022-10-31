@@ -151,7 +151,7 @@ describe("API endpoint /api/question", function () {
         // Works as intended
         it("works as intended", (done) => {
             chai.request(app)
-                .post(getQuestion)
+                .post(getQuestionsByFilter)
                 .send({ 'difficulty': 'Hard', 'topic': 'I/O', 'qid': 3 })
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -165,7 +165,7 @@ describe("API endpoint /api/question", function () {
         // Returns everything with no filters
         it("get all questions", (done) => {
             chai.request(app)
-                .post(getQuestion)
+                .post(getQuestionsByFilter)
                 .send({})
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -179,7 +179,7 @@ describe("API endpoint /api/question", function () {
         // Filters too specific, no question returned
         it("filters too specific", (done) => {
             chai.request(app)
-                .post(getQuestion)
+                .post(getQuestionsByFilter)
                 .send({ 'difficulty': 'Hard', 'topic': 'I/O', 'qid': 1 })
                 .end((err, res) => {
                     res.should.have.status(200);
