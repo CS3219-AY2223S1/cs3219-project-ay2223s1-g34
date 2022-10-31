@@ -1,3 +1,8 @@
   steps:
     - name: 'gcr.io/cloud-builders/gcloud'
-      args: ['app','deploy','./user-service/cloudbuild.yaml']
+      args:
+      - 'builds'
+      - 'submit'
+      - '.'
+      - '--config'
+      - 'user-service/cloudbuild.yaml'
