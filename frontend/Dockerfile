@@ -11,5 +11,5 @@ ENV const URI_COLLAB_SVC=https://collab-service-ragb43dwzq-de.a.run.app
 ENV const URI_MATCHING_SVC=https://matching-service-ragb43dwzq-de.a.run.app
 ENV URI_QUESTION_SVC=https://question-service-ragb43dwzq-de.a.run.app
 
-EXPOSE 3000
 RUN npm run build
+EXPOSE 3000
