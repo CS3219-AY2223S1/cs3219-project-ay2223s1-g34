@@ -1,7 +1,7 @@
   steps:
     # Build the container image
     - name: 'gcr.io/cloud-builders/docker'
-      args: ['buildx', 'build', '--platform', 'linux/amd64' '-t', 'gcr.io/cs3219-peerprepg34/frontend', './frontend']
+      args: ['build', '-t', 'gcr.io/cs3219-peerprepg34/frontend', './frontend']
 
     # Push the container image to Container Registry
     - name: 'gcr.io/cloud-builders/docker'
