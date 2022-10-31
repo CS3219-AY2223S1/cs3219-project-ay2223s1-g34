@@ -12,6 +12,7 @@ export const initIo = (httpServer) => {
             origin: FRONTEND_URL,
             credentials: true,
         },
+        transports: ["websocket","polling"]
     };
     io = new Server(httpServer, options);
     io.use(authenticate).on("connection", (socket) =>
