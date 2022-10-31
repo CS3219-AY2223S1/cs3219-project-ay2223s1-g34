@@ -6,6 +6,8 @@ RUN npm install
 COPY . ./
 
 ENV ENV=PROD
+ENV FRONTEND_URL=http://localhost:3000
+ENV PORT=8002
 ENV DB_CLOUD_URI=mongodb+srv://admin:admin123@cluster0.esazx24.mongodb.net/cs3219-project-user-service?retryWrites=true&w=majority
 ENV JWT_SECRET=threedoorcabinet
 ENV FRONTEND_URL=http://localhost:3000
