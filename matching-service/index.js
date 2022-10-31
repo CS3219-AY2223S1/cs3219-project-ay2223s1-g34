@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { createServer } from "http";
+import { createServer } from "https";
 
 import router from "./routes/routes.js";
 import { initIo } from "./socket.js";
