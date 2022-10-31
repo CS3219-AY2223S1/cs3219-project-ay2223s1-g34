@@ -12,9 +12,10 @@ let mongoDB =
 		? process.env.DB_CLOUD_URI
 		: process.env.DB_LOCAL_URI;
 
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+const con = await mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 let db = mongoose.connection;
+console.log(`MongoDB Connected: ${con.connection.host}`)
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 // Create new account
@@ -75,15 +76,20 @@ export async function resetPassword(token, newPassword) {
 
 // Verify Email
 export async function verifyEmail(token) {
-	const verifiedToken = jwt.verify(token, process.env.JWT_SECRET);
-	const account = await UserModel.findOne({
-		email: verifiedToken.email,
-	});
-	if (account) {
-		account.verified = true;
-		account.save();
-		return account;
-	} else {
+	try {
+		const verifiedToken = jwt.verify(token, process.env.JWT_SECRET);
+		const account = await UserModel.findOne({
+			email: verifiedToken.email,
+		});
+		if (account) {
+			account.verified = true;
+			account.save();
+			return account;
+		} else {
+			return null;
+		}
+	} catch (error) {
+		console.log(error);
 		return null;
 	}
 }

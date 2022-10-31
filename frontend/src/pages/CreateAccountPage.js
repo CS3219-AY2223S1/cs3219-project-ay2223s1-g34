@@ -35,31 +35,56 @@ function CreateAccountPage() {
 		navigate("/signin");
 	};
 
-	const handleSignup = async () => {
-		setLoadingOpen(true);
-		const res = await axios
-			.post(
-				URL_USER_SVC + "/createacc",
-				{ username, email, password },
-				{ withCredentials: true, credentials: "include" }
-			)
-			.catch((err) => {
-				setErrorMessage(err.response.data.message);
-			});
+	const validateFields = () => {
+		// Check username length
+		if (username.length == 0) {
+			setErrorMessage("Please fill in all fields!");
+			return false;
+		}
+		if (username.length < 6) {
+			setErrorMessage("Username has to be at least 6 characters long!");
+			return false;
+		}
+		// Check password length
+		if (password.length == 0) {
+			setErrorMessage("Please fill in all fields!");
+			return false;
+		}
+		if (password.length < 8) {
+			setErrorMessage("Password has to be at least 8 characters long!");
+			return false;
+		}
+		return true;
+	};
 
-		if (res && res.status === STATUS_CODE_CREATED) {
-			const res2 = await axios
-				.post(URL_USER_SVC + "/sendverify" + "/" + email)
+	const handleSignup = async () => {
+		if (validateFields()) {
+			setLoadingOpen(true);
+			const res = await axios
+				.post(
+					URL_USER_SVC + "/createacc",
+					{ username, email, password },
+					{ withCredentials: true, credentials: "include" }
+				)
 				.catch((err) => {
 					setErrorMessage(err.response.data.message);
 				});
 
-			if (res2 && res2.status === STATUS_CODE_SUCCESS) {
-				handleOpenAlert();
-			}
-		}
+			if (res && res.status === STATUS_CODE_CREATED) {
+				const res2 = await axios
+					.post(URL_USER_SVC + "/sendverify" + "/" + email)
+					.catch((err) => {
+						setErrorMessage(err.response.data.message);
+					});
 
-		setLoadingOpen(false);
+				if (res2 && res2.status === STATUS_CODE_SUCCESS) {
+					handleOpenAlert();
+				}
+			}
+
+			setLoadingOpen(false);
+		} else {
+		}
 	};
 
 	return (
@@ -103,6 +128,9 @@ function CreateAccountPage() {
 						value={username}
 						onChange={(e) => setUsername(e.target.value)}
 						sx={{ marginBottom: "0.15em" }}
+						inputProps={{
+							maxLength: 18,
+						}}
 						InputProps={{ style: { fontSize: "0.3em" } }}
 						InputLabelProps={{ style: { fontSize: "0.3em" } }}
 						autoFocus
@@ -129,6 +157,9 @@ function CreateAccountPage() {
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						sx={{ marginBottom: "1em" }}
+						inputProps={{
+							maxLength: 256,
+						}}
 						InputProps={{ style: { fontSize: "0.3em" } }}
 						InputLabelProps={{ style: { fontSize: "0.3em" } }}
 						type="password"
@@ -218,7 +249,7 @@ function CreateAccountPage() {
 					align="center"
 					marginTop="1em"
 				>
-					Some text or image about PeerPrep
+					Solve coding questions together
 				</Typography>
 			</Box>
 
@@ -236,7 +267,7 @@ function CreateAccountPage() {
 				<DialogContent
 					sx={{ fontSize: "0.3em", fontFamily: "Poppins" }}
 				>
-					We have sent an email to you to {email} to verify your
+					We have sent an email to {email} to verify your
 					account!
 				</DialogContent>
 

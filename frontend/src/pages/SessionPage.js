@@ -7,10 +7,11 @@ import {
 	AppBar,
 } from "@mui/material";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import io from "socket.io-client";
 import { URI_COLLAB_SVC } from "../configs";
 import { useNavigate, useLocation } from "react-router-dom";
+import MonacoEditor from "react-monaco-editor";
 
 function getEl(id) {
 	return document.getElementById(id);
@@ -18,32 +19,55 @@ function getEl(id) {
 
 export default function SessionPage() {
 	let socket;
+	let editor;
 	const location = useLocation();
 	const navigate = useNavigate();
+	const username = location.state.username;
+	const topic = location.state.topic;
+	const sessionId = location.state.roomId;
+	const [editorText, setEditorText] = useState();
 
+	socket = io(URI_COLLAB_SVC, {
+		withCredentials: true,
+		credentials: "include",
+		query: { id: sessionId },
+	});
+
+	const onMount = (input) => {
+		editor = input;
+		setEditorText("Enter your code here!");
+	};
+
+	const handleEditorChange = (text) => {
+		setEditorText(text);
+		console.log(editorText);
+	};
 	const handleSession = useCallback(async () => {
-		const sessionId = location.state.roomId;
-
-		socket = io(URI_COLLAB_SVC, {
-			withCredentials: true,
-			credentials: "include",
-			query: { id: sessionId },
-		});
-
-		const editor = getEl("editor");
 		const chatfield = getEl("chatfield");
 		const chatbox = getEl("chatbox");
-		editor.addEventListener("keyup", (evt) => {
-			const text = editor.value;
-			socket.emit("editor", { content: text, to: sessionId });
+
+		const updateChatbox = (text) => {
+			chatbox.value += text + "\n";
+			chatbox.scrollTo(0, chatbox.scrollHeight);
+		};
+
+		if (location.state.isInviteMatched) {
+			updateChatbox("Successful matching via invitation");
+		}
+
+		editor.onKeyUp(() => {
+			socket.emit("editor", {
+				content: editor.getValue(),
+				to: sessionId,
+			});
 		});
+
 		chatfield.addEventListener("keypress", (evt) => {
 			evt.preventDefault();
 			if (evt.key === "Enter" && chatfield.value) {
-				chatbox.value += "Me: " + chatfield.value + "\n";
-				chatbox.scrollTo(0, chatbox.scrollHeight);
+				updateChatbox(username + ": " + chatfield.value);
 				socket.emit("chat", {
-					message: chatfield.value,
+					message: username + ": " + chatfield.value,
 					to: sessionId,
 				});
 				chatfield.value = "";
@@ -51,19 +75,21 @@ export default function SessionPage() {
 				chatfield.value += evt.key;
 			}
 		});
+
 		socket.on("editor", (data) => {
-			editor.value = data;
+			handleEditorChange(data);
 		});
 
-		socket.on("chat", (data) => {
-			chatbox.value += "=> Partner: " + data + "\n";
-			chatbox.scrollTo(0, chatbox.scrollHeight);
-		});
+		socket.on("chat", (data) => updateChatbox(data));
+		socket.on("exit", () => updateChatbox("Partner left session"));
 	}, [location, navigate]);
 
 	function sessionClose() {
-		const state = location.state;
+		const sessionId = location.state.roomId;
+		socket.emit("exit", { to: sessionId });
 		socket.close();
+
+		const state = location.state;
 		navigate("/home", { state });
 	}
 
@@ -89,7 +115,7 @@ export default function SessionPage() {
 					</Typography>
 				</Toolbar>
 			</AppBar>
-			<Toolbar/>
+			<Toolbar />
 			<Box display="flex" flexDirection="row" height="100%">
 				<Box
 					display="flex"
@@ -98,36 +124,54 @@ export default function SessionPage() {
 					height="100%"
 					justifyContent="space-between"
 				>
-					<Box margin="0.25em">
+					<Box
+						margin="0.25em"
+						padding="0.2em"
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							overflow: "hidden",
+							overflowY: "scroll",
+							border: 1,
+							borderRadius: 1,
+							height: "28vh",
+						}}
+					>
 						<Typography fontSize="0.35em" fontFamily="Lato">
-							Difficulty:
+							Difficulty: {location.state.difficultyLevel}
 						</Typography>
 						<Typography fontSize="0.35em" fontFamily="Lato">
-							Topic:
+							Topic: {location.state.topic}
 						</Typography>
-						<Typography fontSize="0.35em" fontFamily="Lato">
+						<Typography
+							fontSize="0.35em"
+							fontFamily="Lato"
+							style={{ wordWrap: "break-word" }}
+						>
 							Question: {location.state.question}
 						</Typography>
 					</Box>
 					<Box
-						height="100%"
 						padding="0.25em"
 						margin="0.25em"
-						sx={{ border: 1}}
+						sx={{
+							border: 1,
+							borderRadius: 1,
+						}}
 					>
 						<TextField
 							id="chatbox"
 							multiline={true}
-							minRows={15}
-							maxRows={15}
-							margin="0.2em"
+							minRows={10}
+							maxRows={10}
+							margin="0.1em"
 							fullWidth
 							InputProps={{
 								readOnly: true,
 								style: {
 									fontFamily: "Poppins",
 									fontSize: "0.3em",
-									height: "50vh",
+									height: "35vh",
 								},
 							}}
 							placeholder="Chatbox here"
@@ -153,28 +197,34 @@ export default function SessionPage() {
 					alignItems="center"
 				>
 					<Box
-						height="100%"
+						height="70vh"
 						width="90%"
 						padding="0.25em"
 						margin="0.25em"
-						sx={{ border: 1, borderColor: "secondary.main" }}
+						sx={{
+							border: 1,
+							borderRadius: 1,
+							borderColor: "secondary.main",
+							display: "flex",
+							flexDirection: "column",
+							overflow: "hidden",
+							overflowY: "scroll",
+						}}
 						id="chatbox"
 					>
-						<TextField
-							fullWidth
-							id="editor"
-							variant="standard"
-							placeholder="Enter your code here"
-							InputProps={{
-								disableUnderline: true,
-								style: {
-									fontFamily: "Poppins",
-									fontSize: "0.3em",
-									color: "#FFFFFF",
+						<MonacoEditor
+							options={{
+								automaticLayout: true,
+								minimap: {
+									enabled: false,
 								},
 							}}
-							multiline={true}
-						></TextField>
+							id="editor"
+							theme="vs-dark"
+							value={editorText}
+							editorDidMount={onMount}
+							onChange={handleEditorChange}
+						/>
 					</Box>
 					<Button
 						id="finish-button"

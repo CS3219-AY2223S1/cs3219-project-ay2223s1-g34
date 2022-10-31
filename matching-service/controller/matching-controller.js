@@ -14,7 +14,9 @@ const validateRequest = (res, req) => {
         validationResult(req).throw();
     } catch (err) {
         console.log(err);
-        res.status(400).json({ message: "Invalid request" });
+        res.status(400).json({
+            message: "Invalid request",
+        });
         return false;
     }
     return true;
@@ -35,9 +37,11 @@ export async function submitMatch(req, res) {
     } = req.body;
 
     var match;
+    var isInviteMatched = false;
     if (emailToInvite) {
         // invite match
         match = await ormFindMatchByEmail(emailToInvite, createdAt);
+        isInviteMatched = true;
     } else {
         match = await ormFindMatch(email, difficultyLevel, topic, createdAt);
     }
@@ -78,8 +82,13 @@ export async function submitMatch(req, res) {
     }
 
     const roomId = uuidv4();
-    user1Socket.emit(MATCHING_SUCCESS, { roomId });
-    user2Socket.emit(MATCHING_SUCCESS, { roomId });
-    console.log(`Matching success ${email}`);
+    const data = { roomId, isInviteMatched };
+    user1Socket.emit(MATCHING_SUCCESS, data);
+    user2Socket.emit(MATCHING_SUCCESS, data);
+    console.log(
+        `Matching success for ${email}${
+            isInviteMatched ? ", invitation by email" : ""
+        }`
+    );
     return res.status(200).json({ message: "Matching success" });
 }
