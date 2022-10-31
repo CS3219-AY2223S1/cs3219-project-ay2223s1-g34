@@ -13,12 +13,3 @@ ENV URI_QUESTION_SVC=https://question-service-ragb43dwzq-de.a.run.app
 
 EXPOSE 3000
 CMD [ "npm", "start" ]
-
-FROM fholzer/nginx-brotli:v1.12.2
-
-WORKDIR /etc/nginx
-ADD nginx.conf /etc/nginx/nginx.conf
-
-COPY --from=build /usr/src/app/build /usr/share/nginx/html
-EXPOSE 443
-CMD ["nginx", "-g", "daemon off;"]
