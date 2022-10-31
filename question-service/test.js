@@ -45,11 +45,11 @@ describe("API endpoint /api/question", function () {
     const endpoint = '/api/question';
 
     // Test general endpoint
-    describe("GET /", function () {
+    describe("POST /", function () {
         // Test the API endpoint is running correctly
         it("API endpoint is running correctly", (done) => {
             chai.request(app)
-                .get(endpoint)
+                .post(endpoint)
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.eql("Hello World from question-service");
@@ -59,13 +59,13 @@ describe("API endpoint /api/question", function () {
     });
 
     // Test getQuestion
-    describe("GET /getQuestion", function () {
+    describe("POST /getQuestion", function () {
         getQuestion = endpoint + '/getQuestion';
 
         // Test wrong difficulty
         it("wrong difficulty covered: appropiate message", (done) => {
             chai.request(app)
-                .get(getQuestion)
+                .post(getQuestion)
                 .send({ 'difficulty': 'wrong', 'topic': 'I/O' })
                 .end((err, res) => {
                     res.should.have.status(500);
@@ -78,7 +78,7 @@ describe("API endpoint /api/question", function () {
         // Test wrong topic
         it("wrong topic covered: appropiate message", (done) => {
             chai.request(app)
-                .get(getQuestion)
+                .post(getQuestion)
                 .send({ 'difficulty': 'Hard', 'topic': 'wrong' })
                 .end((err, res) => {
                     res.should.have.status(500);
@@ -91,7 +91,7 @@ describe("API endpoint /api/question", function () {
         // Test wrong topic type
         it("wrong topic covered: appropiate message", (done) => {
             chai.request(app)
-                .get(getQuestion)
+                .post(getQuestion)
                 .send({ 'difficulty': 'Hard', 'topic': 213 })
                 .end((err, res) => {
                     res.should.have.status(500);
@@ -104,7 +104,7 @@ describe("API endpoint /api/question", function () {
         // Works when difficulty & topic
         it("difficulty and topic works", (done) => {
             chai.request(app)
-                .get(getQuestion)
+                .post(getQuestion)
                 .send({ 'difficulty': 'Hard', 'topic': 'I/O' })
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -118,7 +118,7 @@ describe("API endpoint /api/question", function () {
         // Works when qid
         it("qid works", (done) => {
             chai.request(app)
-                .get(getQuestion)
+                .post(getQuestion)
                 .send({ 'qid': 1 })
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -132,7 +132,7 @@ describe("API endpoint /api/question", function () {
         // Test all three given
         it("all three choices given in query does not crash", (done) => {
             chai.request(app)
-                .get(getQuestion)
+                .post(getQuestion)
                 .send({ 'difficulty': 'Hard', 'topic': 'I/O', 'qid': 1 })
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -145,13 +145,13 @@ describe("API endpoint /api/question", function () {
     }); res.body.should.be.a('array');
 
     // Test getQuestionsByFilter
-    describe("GET /getQuestionsByFilter", function () {
+    describe("POST /getQuestionsByFilter", function () {
         getQuestionsByFilter = endpoint + '/getQuestionsByFilter';
 
         // Works as intended
         it("works as intended", (done) => {
             chai.request(app)
-                .get(getQuestion)
+                .post(getQuestion)
                 .send({ 'difficulty': 'Hard', 'topic': 'I/O', 'qid': 3 })
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -165,7 +165,7 @@ describe("API endpoint /api/question", function () {
         // Returns everything with no filters
         it("get all questions", (done) => {
             chai.request(app)
-                .get(getQuestion)
+                .post(getQuestion)
                 .send({})
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -179,7 +179,7 @@ describe("API endpoint /api/question", function () {
         // Filters too specific, no question returned
         it("filters too specific", (done) => {
             chai.request(app)
-                .get(getQuestion)
+                .post(getQuestion)
                 .send({ 'difficulty': 'Hard', 'topic': 'I/O', 'qid': 1 })
                 .end((err, res) => {
                     res.should.have.status(200);
