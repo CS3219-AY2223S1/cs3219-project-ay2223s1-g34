@@ -12,4 +12,4 @@ ENV const URI_MATCHING_SVC=https://matching-service-ragb43dwzq-de.a.run.app
 ENV URI_QUESTION_SVC=https://question-service-ragb43dwzq-de.a.run.app
 
 EXPOSE 3000
-CMD [ "npm", "start" ]
+RUN npm run build
