@@ -18,7 +18,7 @@ export const initIo = (httpServer) => {
         secure: true
     };
     io = new Server(httpServer, options);
-    io.use(authenticate).on("connection", (socket) =>
+    io.on("connection", (socket) =>
         console.log(`New client connected to ${socket.id}`)
     );
     return io;
