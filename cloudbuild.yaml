@@ -1,3 +1,36 @@
   steps:
-  - name: 'docker/compose:1.26.2'
-    args: ['up', '-d']
+    - name: 'gcr.io/cloud-builders/gcloud'
+      args:
+      - 'builds'
+      - 'submit'
+      - '.'
+      - '--config'
+      - 'user-service/cloudbuild.yaml'
+    - name: 'gcr.io/cloud-builders/gcloud'
+      args:
+      - 'builds'
+      - 'submit'
+      - '.'
+      - '--config'
+      - 'matching-service/cloudbuild.yaml'
+    - name: 'gcr.io/cloud-builders/gcloud'
+      args:
+      - 'builds'
+      - 'submit'
+      - '.'
+      - '--config'
+      - 'question-service/cloudbuild.yaml'
+    - name: 'gcr.io/cloud-builders/gcloud'
+      args:
+      - 'builds'
+      - 'submit'
+      - '.'
+      - '--config'
+      - 'collab-service/cloudbuild.yaml'
+    - name: 'gcr.io/cloud-builders/gcloud'
+      args:
+      - 'builds'
+      - 'submit'
+      - '.'
+      - '--config'
+      - 'frontend/cloudbuild.yaml'

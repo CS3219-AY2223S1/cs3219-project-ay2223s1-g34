@@ -23,6 +23,7 @@ const io = new Server(http, {
         origin: FRONTEND_URL,
         credentials: true,
     },
+    transports: ["websocket","polling"]
 });
 
 //connect

@@ -26,6 +26,7 @@ function SignInPage() {
 
 		if (res && res.status === STATUS_CODE_SUCCESS) {
 			const username = res.data.username
+			const token = res.data.token;
 			navigate("/home", { state: { email , username} });
 		}
 	};
@@ -67,7 +68,7 @@ function SignInPage() {
 					marginTop="1em"
 					width="60%"
 				>
-					Solve coding questions together
+					Beat the LeetCode grind
 				</Typography>
 			</Box>
 
