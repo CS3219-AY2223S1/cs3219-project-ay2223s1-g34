@@ -37,9 +37,13 @@ export default function WaitingPage() {
             withCredentials: true,
             credentials: "include",
             transports: ["websocket","polling"],
-            extraHeaders: {
-                'Cookie': `token=${cookies.get("token")}`
-              }
+            transportOptions: {
+                polling: {
+                    extraHeaders: {
+                        'Cookie': `token=${cookies.get("token")}`
+                    }
+                }
+            }
         });
 
         socket.on("connect", async () => {
