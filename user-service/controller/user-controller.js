@@ -51,7 +51,7 @@ export async function signIn(req, res) {
 				console.log(`Successfully signed in as ${resp}!`);
 				// Generate auth token
 				const token = generateToken(email);
-				res.cookie("token", token, { httpOnly: true, sameSite: 'none', secure: true });
+				res.cookie("token", token, { httpOnly: false, sameSite: 'none', secure: true });
 				return res.status(200).json({
 					message: `Successfully signed in as ${resp}!`,
 					username: `${resp}`,

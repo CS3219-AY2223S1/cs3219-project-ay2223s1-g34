@@ -32,7 +32,7 @@ export default function WaitingPage() {
         const difficultyLevel = location.state.difficultyLevel;
         const topic = location.state.topic;
         const emailToInvite = location.state.emailToInvite;
-
+        console.log(cookies.get("token"))
         const socket = io(URI_MATCHING_SVC, {
             withCredentials: true,
             credentials: "include",
