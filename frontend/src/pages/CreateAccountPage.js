@@ -249,7 +249,7 @@ function CreateAccountPage() {
 					align="center"
 					marginTop="1em"
 				>
-					Solve coding questions together
+					Beat the LeetCode grind
 				</Typography>
 			</Box>
 

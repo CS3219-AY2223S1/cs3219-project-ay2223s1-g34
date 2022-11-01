@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import io from "socket.io-client";
-import { Cookies } from 'react-cookie';
 
 import { Box, Button, Typography } from "@mui/material";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
@@ -22,7 +21,6 @@ export default function WaitingPage() {
 
     const navigate = useNavigate();
     const location = useLocation();
-	const cookies = new Cookies();
 
     const WAIT_DURATION = 30;
 
@@ -32,18 +30,11 @@ export default function WaitingPage() {
         const difficultyLevel = location.state.difficultyLevel;
         const topic = location.state.topic;
         const emailToInvite = location.state.emailToInvite;
-        console.log(cookies.get("token"))
+
         const socket = io(URI_MATCHING_SVC, {
             withCredentials: true,
             credentials: "include",
             transports: ["websocket","polling"],
-            transportOptions: {
-                polling: {
-                    extraHeaders: {
-                        'Cookie': `token=${cookies.get("token")}`
-                    }
-                }
-            }
         });
 
         socket.on("connect", async () => {
