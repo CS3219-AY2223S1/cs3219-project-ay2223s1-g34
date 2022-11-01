@@ -102,12 +102,13 @@ export async function ormLogoutUser(token) {
 export async function ormForgotPassword(email) {
 	// Check whether email exist
 	const user = await isEmailExist(email);
+	const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 	if (user && user.verified) {
 		const resetToken = user.getResetPasswordToken();
 		await user.save();
 
 		// Create and send Email
-		const resetUrl = `http://localhost:3000/resetpw/${resetToken}`;
+		const resetUrl = `${FRONTEND_URL}/resetpw/${resetToken}`;
 		const text = `Click the link to reset your password: ${resetUrl}`;
 		try {
 			await sendEmail({
