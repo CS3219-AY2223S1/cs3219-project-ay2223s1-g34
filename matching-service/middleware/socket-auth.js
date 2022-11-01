@@ -16,6 +16,6 @@ export default function authenticate(socket, next) {
             next();
         });
     } else {
-        next(new Error("Authentication error"));
+        next(new Error("Authentication error: Missing Token"));
     }
 }
