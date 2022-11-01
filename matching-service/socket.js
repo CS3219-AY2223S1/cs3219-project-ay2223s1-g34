@@ -8,6 +8,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
 
 export const initIo = (httpServer) => {
     var options = {
+        cookie: true,
         cors: {
             origin: FRONTEND_URL,
             credentials: true,
