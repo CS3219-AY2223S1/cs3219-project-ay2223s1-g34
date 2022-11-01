@@ -132,7 +132,8 @@ export async function ormForgotPassword(email) {
 
 export async function ormSendVerifyEmail(email, token) {
 	// Create and send Email
-	const resetUrl = `http://localhost:3000/verify/${token}`;
+	const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+	const resetUrl = `${FRONTEND_URL}/verify/${token}`;
 	const text = `Click the link to verify your email: ${resetUrl}`;
 	try {
 		await sendEmail({
