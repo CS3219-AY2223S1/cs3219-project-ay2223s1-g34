@@ -4,7 +4,6 @@ import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_SUCCESS } from "../constants";
 import { useNavigate , useLocation} from "react-router-dom";
-import { Cookies } from 'react-cookie';
 
 function SignInPage() {
 	const [email, setEmail] = useState("");
@@ -12,7 +11,6 @@ function SignInPage() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
 	const location = useLocation();
-	const cookies = new Cookies();
 
 	const handleSignin = async () => {
 		location.state = { email : email}
@@ -29,7 +27,6 @@ function SignInPage() {
 		if (res && res.status === STATUS_CODE_SUCCESS) {
 			const username = res.data.username
 			const token = res.data.token;
-			cookies.set('token', token);		
 			navigate("/home", { state: { email , username} });
 		}
 	};
