@@ -37,9 +37,8 @@ export default function WaitingPage() {
             withCredentials: true,
             credentials: "include",
             transports: ["websocket","polling"],
-            
             extraHeaders: {
-                cookie: `token=${cookies.get("token")}`
+                'Cookie': `token=${cookies.get("token")}`
               }
         });
 
