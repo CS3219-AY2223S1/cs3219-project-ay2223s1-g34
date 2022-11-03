@@ -122,7 +122,7 @@ function VerifyEmailPage() {
 					marginTop="1em"
 					width="60%"
 				>
-					Solve coding questions together
+					Beat the LeetCode grind
 				</Typography>
 			</Box>
 

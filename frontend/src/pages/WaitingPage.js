@@ -34,6 +34,7 @@ export default function WaitingPage() {
         const socket = io(URI_MATCHING_SVC, {
             withCredentials: true,
             credentials: "include",
+            transports: ["websocket","polling"],
         });
 
         socket.on("connect", async () => {

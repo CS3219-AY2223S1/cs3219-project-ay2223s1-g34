@@ -5,15 +5,14 @@ COPY package*.json ./
 RUN npm install
 COPY . ./
 
-EXPOSE 8000
-
 ENV ENV=PROD
+ENV PORT=8001
 ENV DB_CLOUD_URI=mongodb+srv://admin:admin123@cluster0.esazx24.mongodb.net/cs3219-project-user-service?retryWrites=true&w=majority
 ENV JWT_SECRET=threedoorcabinet
+ENV FRONTEND_URL=localhost:3000
 ENV FROM_NAME=PeerPrep
 ENV FROM_EMAIL=threedoorcabinet@gmail.com
 ENV FROM_EMAIL_PW=ivxlghliklnbmhta
-ENV TO_EMAIL=hogantan98@gmail.com
 
-RUN npm test
+EXPOSE 8001
 CMD [ "npm", "start" ]

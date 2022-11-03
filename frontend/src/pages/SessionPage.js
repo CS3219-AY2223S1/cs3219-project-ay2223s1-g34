@@ -31,6 +31,7 @@ export default function SessionPage() {
 		withCredentials: true,
 		credentials: "include",
 		query: { id: sessionId },
+		transports: ["websocket","polling"]
 	});
 
 	const onMount = (input) => {
