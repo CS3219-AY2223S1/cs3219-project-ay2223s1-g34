@@ -9,7 +9,6 @@ chai.should();  // assertion style
 
 // General running
 describe("General", function () {
-    this.timeout(50000);
 
     // Test general server
     describe("GET /", function () {
@@ -41,18 +40,17 @@ describe("General", function () {
 
 // API testing
 describe("API endpoint /api/question", function () {
-    this.timeout(50000);
     const endpoint = '/api/question';
 
     // Test general endpoint
-    describe("POST /", function () {
+    describe("GET /", function () {
         // Test the API endpoint is running correctly
         it("API endpoint is running correctly", (done) => {
             chai.request(app)
-                .post(endpoint)
+                .get(endpoint)
                 .end((err, res) => {
                     res.should.have.status(200);
-                    res.body.should.eql("Hello World from question-service");
+                    res.text.should.eql("Hello World from question-service");
                     done();
                 });
         });
@@ -60,7 +58,7 @@ describe("API endpoint /api/question", function () {
 
     // Test getQuestion
     describe("POST /getQuestion", function () {
-        getQuestion = endpoint + '/getQuestion';
+        const getQuestion = endpoint + '/getQuestion';
 
         // Test wrong difficulty
         it("wrong difficulty covered: appropiate message", (done) => {
@@ -142,11 +140,11 @@ describe("API endpoint /api/question", function () {
                     done();
                 });
         });
-    }); res.body.should.be.a('array');
+    });
 
     // Test getQuestionsByFilter
     describe("POST /getQuestionsByFilter", function () {
-        getQuestionsByFilter = endpoint + '/getQuestionsByFilter';
+        const getQuestionsByFilter = endpoint + '/getQuestionsByFilter';
 
         // Works as intended
         it("works as intended", (done) => {
