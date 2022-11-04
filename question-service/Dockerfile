@@ -14,4 +14,5 @@ ENV FROM_EMAIL=threedoorcabinet@gmail.com
 ENV FROM_EMAIL_PW=ivxlghliklnbmhta
 
 EXPOSE 8003
+RUN npm test
 CMD [ "npm", "start" ]
