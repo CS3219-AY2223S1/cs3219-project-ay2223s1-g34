@@ -17,4 +17,9 @@ export const DIFFICULTY_LEVELS = [
     },
 ];
 
-export const TOPICS = [{ value: 1, label: "I/O" }];
+export const TOPICS = [
+    { value: 1, label: "I/O" },
+    { value: 2, label: "Sliding Window" },
+    { value: 3, label: "Trees" },
+    { value: 4, label: "Graphs" },
+];
