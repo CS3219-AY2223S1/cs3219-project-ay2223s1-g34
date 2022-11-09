@@ -85,10 +85,9 @@ export default function SessionPage() {
 		socket.on("exit", () => updateChatbox("Partner left session"));
 	}, [location, navigate]);
 
-	async function sessionClose() {
+	function sessionClose() {
 		const sessionId = location.state.roomId;
-		await socket.emit("exit", { to: sessionId });
-		socket.close();
+		socket.emit("exit", { to: sessionId },()=>{socket.close()});
 
 		const state = location.state;
 		navigate("/home", { state });
