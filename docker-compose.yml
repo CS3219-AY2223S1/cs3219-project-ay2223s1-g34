@@ -1,0 +1,36 @@
+version: "2"
+
+services:
+  collab-service:
+    build:
+      context: collab-service
+      dockerfile: Dockerfile.local
+    ports:
+        - 8002:8002
+    
+  user-service:
+    build:
+      context: user-service
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+  
+  matching-service:
+    build:
+      context: matching-service
+      dockerfile: Dockerfile.local
+    ports:
+      - 8001:8001
+  
+  question-service:
+    build:
+      context: question-service
+      dockerfile: Dockerfile
+    ports:
+      - 8003:8003
+  frontend:
+      build:
+        context: frontend
+        dockerfile: Dockerfile.local
+      ports:
+      - 3000:3000
